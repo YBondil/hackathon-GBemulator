@@ -10,8 +10,8 @@ class Register{
         auto value() const -> u8 ;
         virtual void set(u8 new_value);
 
-        auto checkBit(u8 bit) const -> bool ;
-        void setBitTo(u8 bit, bool set);
+        auto checkBit(u8 bit) const -> bool ; //à implémenter
+        void setBitTo(u8 bit, bool set); //à implémenter
 
         void increment();
         void decrement();
@@ -22,6 +22,7 @@ class Register{
 };
 
 class FlagRegister : Register{
+    public :
     FlagRegister() = default;
 
     void set(u8 new_value) override;

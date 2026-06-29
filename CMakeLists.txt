@@ -22,9 +22,11 @@ endif()
 add_executable(gbemu
     src/main.cpp
     src/readfile.cpp
+    src/CPU/registers.cpp
+    src/CPU/CPU.cpp
 )
 
 # Headers du projet (lib/utils/*.hpp).
-target_include_directories(gbemu PRIVATE lib lib/utils)
+target_include_directories(gbemu PRIVATE lib lib/utils lib/CPU)
 
 target_link_libraries(gbemu PRIVATE raylib)

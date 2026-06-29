@@ -1,5 +1,5 @@
 #include "definitions.hpp"
-#include "register.hpp"
+#include "registers.hpp"
 #include "memory.hpp"
 #include <vector>
 
@@ -7,7 +7,6 @@
 class CPU {
     public :
         CPU(std::vector<u8>& ROM_data, Memory& memory) ;
-
         auto write(u16 adress)-> void;
         auto read(u16 adress) -> u8 ;
 
@@ -29,6 +28,5 @@ class CPU {
 
 
         // clock ?
-
 
 } ;
