@@ -28,7 +28,7 @@ auto main(int argc, char* argv[]) -> int {
     SetTargetFPS(60);
 
     //Ecran noir pour l'instant
-    std::vector<Color> pixels(GB_WIDTH * GB_HEIGHT, BLACK);
+    std::vector<Color> pixels(GB_WIDTH * GB_HEIGHT, WHITE);
     Image fb = {
         .data    = pixels.data(),
         .width   = GB_WIDTH,
