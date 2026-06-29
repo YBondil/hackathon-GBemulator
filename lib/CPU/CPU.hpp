@@ -7,20 +7,16 @@
 class CPU {
     public :
         CPU(std::vector<u8>& ROM_data, Memory& memory) ;
-        auto write(u16 adress)-> void;
-        auto read(u16 adress) -> u8 ;
-
-        auto run();
+        auto run() -> void;
 
     private :
-        Memory& memory ;
-        auto write_register(char* lettre)->void;
-        auto read_register(char* lettre);
 
+        Memory& memory ;
         std::vector<u8> ROM_data ;
+
+        bool isRunning;
         u16 PC ;//Program Counter
         u16 SP ; //Stack Counter
-
         //registers
         Register A,B,C,D,E,H,L ;
         FlagRegister F;
@@ -30,7 +26,7 @@ class CPU {
         // clock ?
 
 
-        //OPCodes 
+        //OPCodes
 
 
         auto _opcode_adc(u8 value)->Cycles;

@@ -10,8 +10,8 @@ class Register{
         auto value() const -> u8 ;
         virtual void set(u8 new_value);
 
-        auto checkBit(u8 bit) const -> bool ; //à implémenter
-        void setBitTo(u8 bit, bool set); //à implémenter
+        auto checkBit(u8 bit) const -> bool;
+        void setBitTo(u8 bit, bool set);
 
         void increment();
         void decrement();
@@ -44,9 +44,9 @@ class FlagRegister : Register{
 
 class RegisterPair{
 public:
-    RegisterPair(Register& high,Register& low);
+    RegisterPair(Register& high,Register& low): low_byte(low), high_byte(high) {};
 
-    void set(u16 word);
+    void set(u16 value);
 
     auto value() const -> u16;
 
