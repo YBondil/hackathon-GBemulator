@@ -15,3 +15,7 @@ compile_commands.json
 # IDE
 .vscode/
 .idea/
+
+# Raylib
+
+/lib/raylib-quickstart/
