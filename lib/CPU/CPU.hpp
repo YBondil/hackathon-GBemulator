@@ -23,10 +23,15 @@ class CPU {
 
         //registers
         Register A,B,C,D,E,H,L ;
-        FlagRegister F ;
+        FlagRegister F;
         RegisterPair AF, BD, DE, HL;
 
 
         // clock ?
+
+
+        //OPCodes 
+
+        auto opcode_adc(u8 value)->void;
 
 } ;

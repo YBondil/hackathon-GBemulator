@@ -3,7 +3,7 @@
 build*/
 *.o
 *.obj
-
+/lib/raylib
 # CMake
 CMakeCache.txt
 CMakeFiles/

@@ -22,23 +22,24 @@ class Register{
 };
 
 class FlagRegister : Register{
+
     public :
-    FlagRegister() = default;
+        FlagRegister() = default;
 
-    void set(u8 new_value) override;
-    void set_flag_zero(bool set);
-    void set_flag_subtract(bool set);
-    void set_flag_half_carry(bool set);
-    void set_flag_carry(bool set);
+        void set(u8 new_value) override;
+        void set_flag_zero(bool set);
+        void set_flag_subtract(bool set);
+        void set_flag_half_carry(bool set);
+        void set_flag_carry(bool set);
 
-    auto flag_zero() const -> bool;
-    auto flag_subtract() const -> bool;
-    auto flag_half_carry() const -> bool;
-    auto flag_carry() const -> bool;
-    auto flag_zero_value() const -> u8;
-    auto flag_subtract_value() const -> u8;
-    auto flag_half_carry_value() const -> u8;
-    auto flag_carry_value() const -> u8;
+        auto flag_zero() const -> bool;
+        auto flag_subtract() const -> bool;
+        auto flag_half_carry() const -> bool;
+        auto flag_carry() const -> bool;
+        auto flag_zero_value() const -> u8;
+        auto flag_subtract_value() const -> u8;
+        auto flag_half_carry_value() const -> u8;
+        auto flag_carry_value() const -> u8;
 };
 
 class RegisterPair{
