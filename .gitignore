@@ -1,0 +1,17 @@
+# Build
+/build/
+build*/
+*.o
+*.obj
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+.cache/
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
