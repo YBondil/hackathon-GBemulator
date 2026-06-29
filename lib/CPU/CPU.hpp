@@ -32,6 +32,8 @@ class CPU {
 
         //OPCodes 
 
-        auto opcode_adc(u8 value)->void;
 
+        auto _opcode_adc(u8 value)->Cycles;
+        auto opcode_adc_HL()->Cycles;
+        auto opcode_adc_n8(u8 value)->Cycles;
 } ;
