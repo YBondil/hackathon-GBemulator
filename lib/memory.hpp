@@ -8,6 +8,7 @@
 
 
 class Memory {
+
     std::vector<u8> ROM_00;
     std::vector<u8> ROM_01;
     std::vector<u8> VRAM;
@@ -21,7 +22,11 @@ class Memory {
     std::vector<u8> HRAM;
     std::vector<u8> Interrupt;
     
+    Memory::Memory();
+
     u8 Memory::read(u16 adress);
+    void Memory::write(u16 adress);
+
 
 };
 
