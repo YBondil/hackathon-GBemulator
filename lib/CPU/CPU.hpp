@@ -9,6 +9,7 @@ namespace irq {
 };
 
 class CPU {
+        friend struct CpuTest;   // accès aux membres privés pour les tests unitaires
     public :
         CPU(Memory& memory)
             : memory(memory),

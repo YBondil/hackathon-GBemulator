@@ -51,6 +51,8 @@ class Register16 {
     virtual void set(u16 value);
     virtual void increment();
     virtual void decrement();
+    virtual auto low() const -> u8;
+    virtual auto high() const -> u8;
 
     bool operator==(u16 other);
     protected :
@@ -61,10 +63,10 @@ class RegisterPair : public Register16 {
 public:
     RegisterPair(Register& high,Register& low);
 
-    auto value() const -> u16;
-    virtual void set(u16 value);
-    auto low() const -> u8;
-    auto high() const -> u8;
+    void set(u16 value) override;
+    auto low() const -> u8 override;
+    auto high() const -> u8 override;
+
 
 private:
     Register& low_byte;

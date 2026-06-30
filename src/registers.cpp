@@ -64,6 +64,12 @@ void Register16::decrement(){
 bool Register16::operator==(u16 other){
     return other==_value ;
 }
+auto Register16::low() const -> u8{
+    return static_cast<u8>(_value) ;
+}
+auto Register16::high() const -> u8{
+    return static_cast<u8>(_value>>8) ;
+}
 
 ///RegisterPair
 RegisterPair::RegisterPair(Register& high, Register& low): Register16(0), high_byte(high), low_byte(low){
@@ -73,4 +79,11 @@ void RegisterPair::set(u16 value){
     low_byte.set(static_cast<u8>(value));
     high_byte.set(static_cast<u8>(value >> 8)) ;
     _value = bitwise::compose_bytes(high_byte.value(),low_byte.value()) ;
+}
+
+auto RegisterPair::low() const -> u8{
+    return low_byte.value() ;
+}
+auto RegisterPair::high() const -> u8{
+    return high_byte.value() ;
 }
