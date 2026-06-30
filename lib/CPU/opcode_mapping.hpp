@@ -77,7 +77,7 @@ const std::array<CPU::Op, 256> CPU::opcode_table = [] {
     t[0x83] = [](CPU& c){ return c._opcode_add(c.A.value(), c.E.value()); }; // ADD A,E
     t[0x84] = [](CPU& c){ return c._opcode_add(c.A.value(), c.H.value()); }; // ADD A,H
     t[0x85] = [](CPU& c){ return c._opcode_add(c.A.value(), c.L.value()); }; // ADD A,L
-    t[0x86] = [](CPU& c){ return c.opcode_add_HL(); };                       // ADD A,(HL)
+    t[0x86] = [](CPU& c){ return c.opcode_add_A_HL(); };                     // ADD A,(HL)
     t[0x87] = [](CPU& c){ return c._opcode_add(c.A.value(), c.A.value()); }; // ADD A,A
     // t[0xC6] ADD A,n8 : à revoir (l'ordre des args de opcode_add_n8 est buggé)
 

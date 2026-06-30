@@ -21,13 +21,13 @@ struct CpuTest {
 
     // forwarders vers les méthodes privées
     void   push(u16 v)            { cpu.push_stack(v); }
-    u16    pop()                  { return cpu.pop_stack(); }
+    u16    pop()                  { return cpu.pop_stack16(); }
     Cycles handle_interrupts()    { return cpu.handle_interrupts(); }
     Cycles adc(u8 v)             { return cpu._opcode_adc(v); }
     Cycles adc_HL()              { return cpu.opcode_adc_HL(); }
     Cycles adc_n8(u8 v)          { return cpu.opcode_adc_n8(v); }
-    Cycles ld_HL(Register r)     { return cpu.opcode_ld_HL(r); }
-    Cycles ld_n8(u8 n, Register r){ return cpu.opcode_ld_n8(n, r); }
+    Cycles ld_HL(Register& r)    { return cpu.opcode_ld_HL(r); }
+    Cycles ld_n8(u8 n, Register& r){ return cpu.opcode_ld_n8(n, r); }
     Cycles ld_A_n16(u16 a)       { return cpu.opcode_ld_A_n16(a); }
     Cycles ld_A_HLI()            { return cpu.opcode_ld_A_HLI(); }
 };
@@ -129,19 +129,22 @@ static void test_adc_flags() {
 }
 
 // ============================================================
-//  4. AVANCEMENT DE PC (expose le double incrément)
+//  4. CONTRAT PC : les opcodes seuls ne touchent pas PC
 // ============================================================
+// Dans le modèle table, l'avancement de PC est assuré par fetch8/16/s8
+// (validé dans test_opcodes via le vrai run_opcode). Appelées en direct,
+// les méthodes d'opération ne doivent PAS modifier PC.
 static void test_pc_advance() {
-    std::puts("== PC : avancement par opcode ==");
+    std::puts("== PC : non modifié par les opcodes appelés en direct ==");
 
     {   CpuTest t; t.PC() = 0x0100;
         t.HL().set(0xC000); t.mem.write(0xC000, 0x05); t.A().set(0x10);
         t.adc_HL();
-        CHECK(t.PC() == 0x0101); }   // ADC A,(HL) = 1 octet -> +1
+        CHECK(t.PC() == 0x0100); }   // la méthode seule ne touche pas PC
 
     {   CpuTest t; t.PC() = 0x0100; t.A().set(0x10);
         t.adc_n8(0x05);
-        CHECK(t.PC() == 0x0102); }   // ADC A,n8 = 2 octets -> +2
+        CHECK(t.PC() == 0x0100); }   // idem
 }
 
 // ============================================================

@@ -22,6 +22,8 @@ auto Timer::tima_period() const -> int {
     return 1024;
 }
 
+
+
 void Timer::tick(Cycles cycle){
     const int n = cycle.value();
 
