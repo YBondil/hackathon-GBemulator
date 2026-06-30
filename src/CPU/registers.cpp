@@ -11,8 +11,8 @@ auto Register::value() const -> u8{
 auto Register::checkBit(u8 bit) const -> bool{
     return bitwise::check_bit(val, bit);
 }
-auto setBitTo(u8 bit, bool set){
-    bitwise::set_bit(bit, set);
+void Register::setBitTo(u8 bit, bool set){
+    val = bitwise::set_bit_to(val, bit, set);
 }
 void Register::set(u8 new_value){
     val = new_value ;
@@ -34,10 +34,11 @@ void FlagRegister::set(u8 new_value){
     val = new_value & 0xF0;
 }
 
-void FlagRegister::set_flag_zero(bool set){bitwise::set_bit(7,set);}
-void FlagRegister::set_flag_subtract(bool set){bitwise::set_bit(6, set);};
-void FlagRegister::set_flag_half_carry(bool set){bitwise::set_bit(5,set);};
-void FlagRegister::set_flag_carry(bool set){bitwise::set_bit(4,set);};
+void FlagRegister::set_flag_zero(bool set)      { val = bitwise::set_bit_to(val, 7, set); }
+void FlagRegister::set_flag_subtract(bool set)  { val = bitwise::set_bit_to(val, 6, set); }
+void FlagRegister::set_flag_half_carry(bool set){ val = bitwise::set_bit_to(val, 5, set); }
+void FlagRegister::set_flag_carry(bool set)     { val = bitwise::set_bit_to(val, 4, set); }
+
 
 auto FlagRegister::flag_zero() const -> bool{return bitwise::check_bit(val,7);};
 auto FlagRegister::flag_subtract() const -> bool{return bitwise::check_bit(val,6);};

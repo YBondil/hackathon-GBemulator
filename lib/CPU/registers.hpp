@@ -5,7 +5,7 @@
 class Register{
     public :
         Register()=default ;
-
+        virtual ~Register()=default ;
         void reset();
         auto value() const -> u8 ;
         virtual void set(u8 new_value);
@@ -21,7 +21,7 @@ class Register{
         u8 val = 0x0 ;
 };
 
-class FlagRegister : Register{
+class FlagRegister : public Register{
 
     public :
         FlagRegister() = default;

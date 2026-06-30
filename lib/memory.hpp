@@ -4,7 +4,6 @@
 
 class Memory {
     public:
-    auto read(const u16 adress)->u8;
-    auto write(const u16 adress) -> void;
-    auto foo();
+    auto read(const u16 adress)-> u8; //implémenté par la team mémoire
+    auto write(u16 adress, u8 value) -> void; //implémenté par la team mémoire
 } ;

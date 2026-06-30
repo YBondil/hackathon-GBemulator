@@ -24,6 +24,7 @@ add_executable(gbemu
     src/readfile.cpp
     src/CPU/registers.cpp
     src/CPU/CPU.cpp
+    src/CPU/CPU_instructions.cpp
 )
 
 # Headers du projet (lib/utils/*.hpp).
