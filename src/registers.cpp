@@ -1,10 +1,10 @@
-#include "CPU/registers.hpp"
+#include "registers.hpp"
 #include "bitwise.hpp"
 
+///Register
 void Register::reset(){
     val = 0x0 ;
 }
-
 auto Register::value() const -> u8{
     return val;
 }
@@ -17,19 +17,17 @@ void Register::setBitTo(u8 bit, bool set){
 void Register::set(u8 new_value){
     val = new_value ;
 }
-
 void Register::increment(){
     val++ ;
 }
-
 void Register::decrement(){
     val--;
 }
-
 auto Register::operator==(u8 other)const -> bool{
     return other == val;
 }
 
+///FlagRegister
 void FlagRegister::set(u8 new_value){
     val = new_value & 0xF0;
 }
@@ -50,20 +48,29 @@ auto FlagRegister::flag_half_carry_value() const -> u8{return static_cast<u8>(fl
 auto FlagRegister::flag_carry_value() const -> u8{return static_cast<u8>(flag_carry()?1:0);};
 
 
+/// Register16
+void Register16::set(u16 value){
+    _value = value ;
+}
+auto Register16::value() const -> u16{
+    return _value;
+}
+void Register16::increment(){
+    set(value()+1);
+}
+void Register16::decrement(){
+    set(value()-1);
+}
+bool Register16::operator==(u16 other){
+    return other==_value ;
+}
 
+///RegisterPair
+RegisterPair::RegisterPair(Register& high, Register& low): Register16(0), high_byte(high), low_byte(low){
+    u16 value = bitwise::compose_bytes(high.value(), low.value());
+}
 void RegisterPair::set(u16 value){
     low_byte.set(static_cast<u8>(value));
     high_byte.set(static_cast<u8>(value >> 8)) ;
-}
-
-auto RegisterPair::value()const -> u16{
-    return bitwise::compose_bytes(high_byte.value(),low_byte.value()) ;
-}
-
-void RegisterPair::increment(){
-    set(value()+1);
-}
-
-void RegisterPair::decrement(){
-    set(value()-1);
+    _value = bitwise::compose_bytes(high_byte.value(),low_byte.value()) ;
 }

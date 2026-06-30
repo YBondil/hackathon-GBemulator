@@ -1,7 +1,12 @@
+#pragma once
 #include "definitions.hpp"
 #include "registers.hpp"
 #include "memory.hpp"
 
+namespace irq {
+    constexpr u16 IF_ADDR = 0xFF0F;
+    constexpr u16 IE_ADDR = 0xFFFF;
+};
 
 class CPU {
     public :
@@ -17,15 +22,22 @@ class CPU {
     private :
         Cycles run_opcode(u8 opcode) ;
         Memory& memory ;
-        bool isRunning;
+
         u16 PC ;//Program Counter
-        u16 SP ; //Stack Counter
+
+        Register16 SP ; //Stack Counter
+        void push_stack(u16 value) ;
+        auto pop_stack()-> u16;
+
         //registers
         Register A,B,C,D,E,H,L ;
         FlagRegister F;
         RegisterPair AF, BC, DE, HL;
 
-        // clock ? TODO
+        // Timer gestion
+        bool isRunning;
+        bool IME = false ;
+        auto handle_interrupts()-> Cycles ;
 
         //OPCodes
         auto _opcode_adc(u8 value)->Cycles;

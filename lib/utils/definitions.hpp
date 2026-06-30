@@ -29,8 +29,8 @@ struct Bytes{
         int _value = 0;
 };
 
-namespace GB_CONST {
-    const int CPU_FREQ = 4194304 ;
-    const int CPU_FREQ_util = 1048576 ;
-    const int T_CYCLE_PER_FRAME = 70224 ;
-};
+ /* namespace GB_CONST {
+    constexpr int CPU_FREQ = 4194304 ;
+    constexpr int CPU_FREQ_util = 1048576 ;
+    constexpr int T_CYCLE_PER_FRAME = 70224 ;
+}; */

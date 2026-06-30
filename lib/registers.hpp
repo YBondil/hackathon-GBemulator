@@ -42,19 +42,29 @@ class FlagRegister : public Register{
         auto flag_carry_value() const -> u8;
 };
 
-class RegisterPair{
-public:
-    RegisterPair(Register& high,Register& low): low_byte(low), high_byte(high) {};
 
-    void set(u16 value);
+class Register16 {
+    public :
+    Register16(u16 value) : _value(value){} ;
 
     auto value() const -> u16;
+    virtual void set(u16 value);
+    virtual void increment();
+    virtual void decrement();
 
+    bool operator==(u16 other);
+    protected :
+        u16 _value;
+};
+
+class RegisterPair : public Register16 {
+public:
+    RegisterPair(Register& high,Register& low);
+
+    auto value() const -> u16;
+    virtual void set(u16 value);
     auto low() const -> u8;
     auto high() const -> u8;
-
-    void increment();
-    void decrement();
 
 private:
     Register& low_byte;
