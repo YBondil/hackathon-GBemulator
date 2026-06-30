@@ -278,8 +278,8 @@ Cycles CPU::opcode_ld_SP_n16(const u16 n){
 
 
 Cycles CPU::opcode_ld_n16_SP(const u16 adress){
-    u8 down = SP & 0xFF;
-    u8 up = SP >> 8;
+    u8 down = SP.value() & 0xFF;
+    u8 up = SP.value() >> 8;
     memory.write(adress, down);
     memory.write(adress + 1, up);
 
@@ -291,7 +291,7 @@ Cycles CPU::opcode_ld_n16_SP(const u16 adress){
 
 
 Cycles CPU::opcode_ld_HL_SP_s8(s8 n){
-    u16 adress = SP.valeur() + n;
+    u16 adress = SP.value() + n;
     u8 value = memory.read(adress);
     memory.write(HL.value(), value);
 
