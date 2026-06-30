@@ -22,8 +22,10 @@ endif()
 add_executable(gbemu
     src/main.cpp
     src/readfile.cpp
-    src/CPU/registers.cpp
+    src/registers.cpp
     src/CPU/CPU.cpp
+    src/CPU/CPU_instructions.cpp
+    src/timer.cpp
 )
 
 # Headers du projet (lib/utils/*.hpp).
