@@ -17,7 +17,10 @@ void CPU::run() {
             u8 opcode = fetch8();
             cycle = run_opcode(opcode);
         }
-
+        if (latent_enable){
+            latent_enable = false;
+            IME = true;
+        }
         memory.tick(cycle); //gestion ticks ppu etc
     }
 }

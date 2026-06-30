@@ -18,7 +18,7 @@ Cycles CPU::_opcode_adc(u8 value){
     A.set(result);
 
     PC += 1;             //décalage de 1 byte
-    
+
     Cycles cycles(1);
     return cycles;
 
@@ -30,7 +30,7 @@ Cycles CPU::opcode_adc_HL(){
     _opcode_adc(value);
 
     PC += 1;
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -42,7 +42,7 @@ Cycles CPU::opcode_adc_n8(u8 value){
     PC += 2;           //Décalage de 2 bytes
 
     Cycles cycles(2);
-    return cycles;    
+    return cycles;
 }
 
 
@@ -131,11 +131,11 @@ Cycles CPU::opcode_ld_HL(Register& R){
 
 
 Cycles CPU::opcode_ld_HL_n8(RegisterPair& R){
-    memory.write(HL.value(), R.value()); 
-      
+    memory.write(HL.value(), R.value());
+
     PC += 2;
 
-    Cycles cycles(3);  
+    Cycles cycles(3);
     return cycles;
 }
 
@@ -176,7 +176,7 @@ Cycles CPU::opcode_ldh_n16_A(const u16 adress){             //Manque l'encadreme
 
     PC += 2;
 
-    Cycles cycles(3); 
+    Cycles cycles(3);
     return cycles;
 }
 
@@ -186,7 +186,7 @@ Cycles CPU::opcode_ldh_C_A(){
     memory.write(adress, A.value());
 
     PC += 1;
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -226,7 +226,7 @@ Cycles CPU::opcode_ldh_A_C(){
     A.set(memory.read(adress));
 
     PC += 1;
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -235,9 +235,9 @@ Cycles CPU::opcode_ldh_A_C(){
 Cycles CPU::opcode_ld_HLI_A(){
     memory.write(HL.value(),A.value());
     HL.increment();
-    
+
     PC += 1;
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -246,9 +246,9 @@ Cycles CPU::opcode_ld_HLI_A(){
 Cycles CPU::opcode_ld_HLD_A(){
     memory.write(HL.value(),A.value());
     HL.decrement();
-    
+
     PC += 1;
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -257,9 +257,9 @@ Cycles CPU::opcode_ld_HLD_A(){
 Cycles CPU::opcode_ld_A_HLI(){
     A.set(memory.read(HL.value()));
     HL.increment();
-    
+
     PC += 1;
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -268,9 +268,9 @@ Cycles CPU::opcode_ld_A_HLI(){
 Cycles CPU::opcode_ld_A_HLD(){
     A.set(memory.read(HL.value()));
     HL.decrement();
-    
+
     PC += 1;
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -308,8 +308,8 @@ Cycles CPU::opcode_ld_HL_SP_s8(s8 n){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(value & 0xF > 0xF);
     F.set_flag_carry(value > 0xFF);
-    
-    
+
+
     PC += 2;
 
     Cycles cycles(3);
@@ -446,7 +446,6 @@ Cycles CPU::opcode_ret(){
     PC += 1;
     pop_stack8();
     PC += 1;
-    
     Cycles cycles(4);
     return cycles;
 }
@@ -456,6 +455,7 @@ Cycles CPU::opcode_ret_cc(Condition_code cc){
     if(check_condition(cc)){
         return opcode_ret();
     };
+    return Cycles(1);
 }
 
 

@@ -58,7 +58,7 @@ class CPU {
 
         //Flag condition checker
         bool check_condition(Condition_code cc);
-        
+
         //OPCodes
         auto _opcode_adc(u8 value)->Cycles;
         auto opcode_adc_HL()->Cycles;
