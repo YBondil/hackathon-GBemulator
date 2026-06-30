@@ -284,3 +284,35 @@ Cycles CPU::opcode_ld_SP_n16(const u16 n){
 }
 
 
+Cycles CPU::opcode_ld_n16_SP(const u16 adress){
+    u8 down = SP & 0xFF;
+    u8 up = SP >> 8;
+    memory.write(adress, down);
+    memory.write(adress + 1, up);
+
+    PC += 3;
+
+    Cycles cycles(5);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_ld_HL_SP_s8(s8 n){
+    u16 adress = SP.valeur() + n;
+    u8 value = memory.read(adress);
+    memory.write(HL.value(), value);
+
+    F.set_flag_zero(false);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(value & 0xF > 0xF);
+    F.set_flag_carry(value > 0xFF);
+    
+    
+    PC += 2;
+
+    Cycles cycles(3);
+    return cycles;
+}
+
+
+

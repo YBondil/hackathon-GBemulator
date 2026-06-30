@@ -16,7 +16,7 @@ class CPU {
 
         bool isRunning;
         u16 PC ;//Program Counter
-        u16 SP ; //Stack Pointer
+        Register16 SP ; //Stack Pointer
         //registers
         Register A,B,C,D,E,H,L ;
         FlagRegister F;
@@ -61,5 +61,8 @@ class CPU {
         auto opcode_ld_HLD_A()->Cycles;
 
         auto opcode_ld_SP_n16(const u16 n)->Cycles;
+        auto opcode_ld_n16_SP(const u16 adress)->Cycles;
+        auto opcode_ld_HL_SP_s8(s8 n)->Cycles;
+
 
 };
