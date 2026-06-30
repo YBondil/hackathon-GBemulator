@@ -21,6 +21,13 @@ class CPU {
         auto run() -> void;
         using Op = Cycles (*)(CPU&);
 
+        enum class Condition_code{
+            Z,
+            NZ,
+            C,
+            NC,
+        };
+
     private :
         Cycles run_opcode(u8 opcode) ;
         Memory& memory ;
@@ -36,6 +43,10 @@ class CPU {
         auto pop_stack16() -> u16;
         auto pop_stack8() ->u8;
 
+        //Interrupt Master Enable
+        bool IME = false ;
+        bool latent_enable = false ;
+
         //registers
         Register A,B,C,D,E,H,L ;
         FlagRegister F;
@@ -43,9 +54,11 @@ class CPU {
 
         // Timer gestion
         bool isRunning;
-        bool IME = false ;
         auto handle_interrupts()-> Cycles ;
 
+        //Flag condition checker
+        bool check_condition(Condition_code cc);
+        
         //OPCodes
         auto _opcode_adc(u8 value)->Cycles;
         auto opcode_adc_HL()->Cycles;
@@ -99,5 +112,10 @@ class CPU {
         auto opcode_res_u3_r8(Register& R)->Cycles;
         auto opcode_res_u3_HL()->Cycles;
         auto opcode_ret()->Cycles;
-        auto opcode_ret_cc()->Cycles;
+        auto opcode_ret_cc(Condition_code cc)->Cycles;
+        auto opcode_reti()->Cycles;
+
+
+        auto opcode_ei()->Cycles;
+
 };

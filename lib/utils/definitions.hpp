@@ -16,9 +16,8 @@ struct Cycles{
 
     private:
         int _value = 0;
-
-
 };
+
 
 struct Bytes{
     public:
