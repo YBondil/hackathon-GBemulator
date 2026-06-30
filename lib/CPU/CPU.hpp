@@ -115,7 +115,13 @@ class CPU {
         auto opcode_ret_cc(Condition_code cc)->Cycles;
         auto opcode_reti()->Cycles;
 
-
         auto opcode_ei()->Cycles;
 
+        auto opcode_rl_r8(Register& R)->Cycles;
+        auto opcode_rl_HL()->Cycles;
+        auto opcode_rl_A()->Cycles;
+
+        auto opcode_rlc_r8(Register& R)->Cycles;
+        auto opcode_rlc_HL()->Cycles;
+         auto opcode_rlc_A()->Cycles;
 };

@@ -453,9 +453,10 @@ Cycles CPU::opcode_ret(){
 
 Cycles CPU::opcode_ret_cc(Condition_code cc){
     if(check_condition(cc)){
-        return opcode_ret();
+        opcode_ret();
+        return Cycles(5);
     };
-    return Cycles(1);
+    return Cycles(2);
 }
 
 
@@ -472,5 +473,101 @@ Cycles CPU::opcode_reti(){
     opcode_ei();
 
     Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_rl_r8(Register& R){
+    u8 R_value = R.value();
+    u8 new_carry = bitwise::bit_value(R_value, 8);
+    u8 result = (R_value << 1) & F.flag_carry_value();
+    R.set(result);
+    
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_rl_HL(){
+    u8 HL_value = memory.read(HL.value());
+    u8 new_carry = bitwise::bit_value(HL_value, 8);
+    u8 result = (HL_value << 1) & F.flag_carry_value();
+    memory.write(HL.value(), result);
+    
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_rl_A(){
+    u8 A_value = A.value();
+    u8 new_carry = bitwise::bit_value(A_value, 8);
+    u8 result = (A_value << 1) & F.flag_carry_value();
+    A.set(result);
+    
+    F.set_flag_zero(false);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(1);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_rlc_r8(Register& R){
+    u8 R_value = R.value();
+    u8 new_carry = bitwise::bit_value(R_value, 8);
+    u8 result = (R_value << 1) & new_carry;
+    R.set(result);
+    
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(2);
+    return cycles;
+}    
+
+
+Cycles CPU::opcode_rlc_HL(){
+    u8 HL_value = memory.read(HL.value());
+    u8 new_carry = bitwise::bit_value(HL_value, 8);
+    u8 result = (HL_value << 1) & new_carry;
+    memory.write(HL.value(), result);
+    
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(4);
+    return cycles;
+}    
+
+
+Cycles CPU::opcode_rlc_A(){
+    u8 A_value = A.value();
+    u8 new_carry = bitwise::bit_value(A_value, 8);
+    u8 result = (A_value << 1) & new_carry;
+    A.set(result);
+    
+    F.set_flag_zero(false);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(1);
     return cycles;
 }

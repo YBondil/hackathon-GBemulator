@@ -70,6 +70,23 @@ auto CPU::pop_stack8() -> u8 {
 }
 
 
+bool CPU::check_condition(Condition_code cc){
+    switch(cc){
+        case Condition_code::Z : 
+            return F.flag_zero();
+        
+        case Condition_code::NZ : 
+            return ~F.flag_zero();
+        
+        case Condition_code::C : 
+            return F.flag_zero();
+        
+        case Condition_code::NC : 
+            return ~F.flag_zero();
+    }
+}
+
+
 Cycles CPU::run_opcode(u8 opcode) {
     Op op = (opcode == 0xCB) ? cb_table[fetch8()] : opcode_table[opcode];
     if (!op) return Cycles(1);     // opcode non implémenté
