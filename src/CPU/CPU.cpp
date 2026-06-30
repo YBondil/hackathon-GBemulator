@@ -1,12 +1,16 @@
 #include "CPU/CPU.hpp"
+#include "bitwise.hpp"
 
+auto CPU::fetch8() -> u8 {return  memory.read(PC++);};
+auto CPU::fetch16() -> u16 { u8 lo = fetch8(); u8 hi = fetch8() ; return bitwise::compose_bytes(hi, lo);}
+auto CPU::fetch_s8()-> s8 {return static_cast<s8>(fetch8());}
 
 void CPU::run() {
     while (isRunning) {
         Cycles cycle = handle_interrupts();
 
         if (cycle.value() == 0) {
-            u8 opcode = memory.read(PC);
+            u8 opcode = fetch8();
             cycle = run_opcode(opcode);
         }
 
@@ -51,5 +55,11 @@ auto CPU::pop_stack() -> u16 {
     return static_cast<u16>((high << 8) | low);
 }
 
+Cycles CPU::run_opcode(u8 opcode) {
+    Op op = (opcode == 0xCB) ? cb_table[fetch8()] : opcode_table[opcode]; // cas prefix CB
+    if (!op) return Cycles(1);     // opcode non implémenté
+    return op(*this);
+}
 
-auto run_opcode(u8 opcode){return 0x00;}//todo
+
+#include "opcode_mapping.hpp"

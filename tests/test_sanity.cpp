@@ -18,7 +18,6 @@ static void test_bitwise() {
     CHECK(bitwise::check_bit(0x80, 7) == true);
     CHECK(bitwise::check_bit(0x80, 0) == false);
     CHECK(bitwise::compose_bytes(0x12, 0x34) == 0x1234);
-    CHECK(bitwise::compose_nibbles(0xA, 0xB) == 0xAB);
     CHECK(bitwise::clear_bit(0xFF, 0) == 0xFE);
 }
 

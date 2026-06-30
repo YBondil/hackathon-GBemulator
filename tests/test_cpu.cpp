@@ -2,15 +2,9 @@
 //
 // Accès aux membres privés via `struct CpuTest` (friend de CPU dans CPU.hpp).
 // Les fonctions de test libres passent toutes par les forwarders de CpuTest.
-//
-// NB: ce fichier définit un CPU::run_opcode minimal pour que CPU.o linke
-// (la vraie implémentation n'existe pas encore). À SUPPRIMER une fois que
-// CPU::run_opcode sera écrit dans le projet, sinon double définition.
 #include "CPU/CPU.hpp"
 #include "fakememory.hpp"
 #include <cstdio>
-
-Cycles CPU::run_opcode(u8 /*opcode*/) { return Cycles(1); }   // stub temporaire
 
 struct CpuTest {
     FakeMemory mem;

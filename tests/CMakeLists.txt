@@ -38,12 +38,19 @@ add_executable(test_fakememory test_fakememory.cpp)
 target_link_libraries(test_fakememory PRIVATE gbcore)
 add_test(NAME fakememory COMMAND test_fakememory)
 
-# --- test_cpu : stack / interruptions / opcodes (Phase 3) ---
-# NB: test_cpu.cpp fournit un CPU::run_opcode stub tant que le vrai n'existe pas.
-add_executable(test_cpu
-    test_cpu.cpp
+# Sources CPU communes aux tests qui exécutent du vrai code CPU.
+# (CPU.cpp inclut opcode_mapping.hpp -> définit opcode_table/cb_table)
+set(CPU_SOURCES
     ${ROOT}/src/CPU/CPU.cpp
     ${ROOT}/src/CPU/CPU_instructions.cpp
 )
+
+# --- test_cpu : stack / interruptions / opcodes (Phase 3) ---
+add_executable(test_cpu test_cpu.cpp ${CPU_SOURCES})
 target_link_libraries(test_cpu PRIVATE gbcore)
 add_test(NAME cpu COMMAND test_cpu)
+
+# --- test_opcodes : décodage + run_opcode via binaire d'instructions ---
+add_executable(test_opcodes test_opcodes.cpp ${CPU_SOURCES})
+target_link_libraries(test_opcodes PRIVATE gbcore)
+add_test(NAME opcodes COMMAND test_opcodes)

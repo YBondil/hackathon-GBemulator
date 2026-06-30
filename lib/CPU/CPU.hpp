@@ -1,7 +1,9 @@
 #pragma once
 #include "definitions.hpp"
 #include "registers.hpp"
+#include <array>
 #include "memory.hpp"
+
 
 namespace irq {
     constexpr u16 IF_ADDR = 0xFF0F;
@@ -19,10 +21,19 @@ class CPU {
               AF(A, F), BC(B, C), DE(D, E), HL(H, L)   // voir #4 et #15
         {}
         auto run() -> void;
+        using Op = Cycles(*)(CPU&);
 
     private :
         Cycles run_opcode(u8 opcode) ;
         Memory& memory ;
+        auto fetch8()-> u8 ;
+        auto fetch16()-> u16 ;
+        auto fetch_s8()-> s8 ;
+
+        // Timer gestion
+        bool isRunning;
+        bool IME = false ;
+        auto handle_interrupts()-> Cycles ;
 
         u16 PC ;//Program Counter
         Register16 SP ; //Stack Pointer
@@ -34,12 +45,11 @@ class CPU {
         FlagRegister F;
         RegisterPair AF, BC, DE, HL;
 
-        // Timer gestion
-        bool isRunning;
-        bool IME = false ;
-        auto handle_interrupts()-> Cycles ;
+
 
         //OPCodes
+        static const std::array<Op, 256> opcode_table;
+        static const std::array<Op, 256> cb_table;
         auto _opcode_adc(u8 value)->Cycles;
         auto opcode_adc_HL()->Cycles;
         auto opcode_adc_n8(u8 value)->Cycles;
@@ -59,13 +69,13 @@ class CPU {
 
         auto opcode_ldh_n16_A(const u16 adress)->Cycles;
         auto opcode_ldh_C_A()->Cycles;
-        
+
         auto opcode_ld_A_r16(RegisterPair R)->Cycles;
         auto opcode_ld_A_n16(const u16 adress)->Cycles;
 
         auto opcode_ldh_A_n16(const u16 adress)->Cycles;
         auto opcode_ldh_A_C()->Cycles;
-        
+
         auto opcode_ld_A_HLI()->Cycles;
         auto opcode_ld_A_HLD()->Cycles;
         auto opcode_ld_HLI_A()->Cycles;
