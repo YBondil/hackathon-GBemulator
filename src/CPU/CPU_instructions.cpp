@@ -772,6 +772,89 @@ Cycles CPU::opcode_sla_r8(Register& R){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
+
+    Cycles cycles(2);
+    return cycles;
 }
 
 
+Cycles CPU::opcode_sla_HL(){
+    u8 HL_value = memory.read(HL.value());
+    u8 new_carry = bitwise::bit_value(HL_value, 7);
+    u8 result = (HL_value << 1) & 0xFE;
+    memory.write(HL.value(), result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+
+    Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_sra_r8(Register& R){
+    u8 R_value = R.value();
+    u8 new_carry = bitwise::bit_value(R_value, 0);
+    u8 b7 = bitwise::bit_value(R_value, 7);
+    u8 result = (R_value >> 1) & (bitwise::set_bit_to(0xFF,7,bitwise::check_bit(b7,0)));        //R_value>>1 & ?1111111
+    R.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_sra_HL(){
+    u8 HL_value = memory.read(HL.value());
+    u8 new_carry = bitwise::bit_value(HL_value, 7);
+    u8 b7 = bitwise::bit_value(HL_value, 7);
+    u8 result = (HL_value >> 1) & (bitwise::set_bit_to(0xFF,7,bitwise::check_bit(b7,0)));
+    memory.write(HL.value(), result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+
+    Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_srl_r8(Register& R){
+    u8 R_value = R.value();
+    u8 new_carry = bitwise::bit_value(R_value, 0);
+    u8 result = (R_value >> 1) & 0x7F;        //R_value>>1 & 01111111
+    R.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_srl_HL(){
+    u8 HL_value = memory.read(HL.value());
+    u8 new_carry = bitwise::bit_value(HL_value, 7);
+    u8 result = (HL_value >> 1) & 0x7F;
+    memory.write(HL.value(), result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+
+    Cycles cycles(4);
+    return cycles;
+}

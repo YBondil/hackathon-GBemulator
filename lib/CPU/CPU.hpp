@@ -163,7 +163,10 @@ class CPU {
 
         auto opcode_sla_r8(Register& R)->Cycles;
         auto opcode_sla_HL()->Cycles;
+        
         auto opcode_sra_r8(Register& R)->Cycles;
         auto opcode_sra_HL()->Cycles;
-
+        
+        auto opcode_srl_r8(Register& R)->Cycles;
+        auto opcode_srl_HL()->Cycles;
 };
