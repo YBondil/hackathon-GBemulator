@@ -469,7 +469,13 @@ Cycles CPU::opcode_dec_hl(){
 }
 
 
-Cycles CPU::opcode_inc_r8(){ 
+Cycles CPU::opcode_inc_r8(Register& R){ 
+    R.set(R.value() + 1);
+
+    F.set_flag_zero(R.value() == 0);
+    F.set_flag_subtract(0);
+    F.set_flag_half_carry(R.value()%16 == 0);
+    
     Cycles cycles(1);
     return cycles;
     
@@ -477,14 +483,30 @@ Cycles CPU::opcode_inc_r8(){
 
 
 Cycles CPU::opcode_inc_hl(){ 
-    
+    const u8 value = memory.read(HL.value());
+    memory.write(HL.value(), value + 1);
+
+    F.set_flag_zero(memory.read(HL.value()) == 0);
+    F.set_flag_subtract(0);
+    F.set_flag_half_carry(memory.read(HL.value())%16 == 0);
+
     Cycles cycles(3);
     return cycles;
     
 }
 
 
-Cycles CPU::opcode_sbc_a_r8(){ 
+
+
+
+Cycles CPU::opcode_sbc_a_r8(Register& R){ 
+    const int result = A.value() - R.value() - F.flag_carry();
+    A.set(result);
+
+    F.set_flag_zero(result == 0);
+    F.set_flag_subtract(1);
+    F.set_flag_half_carry(A.value()%16 < R.value()%16 + F.flag_carry()%16);
+    F.set_flag_carry(result < 0);
     
     Cycles cycles(1);
     return cycles;
@@ -493,6 +515,13 @@ Cycles CPU::opcode_sbc_a_r8(){
 
 
 Cycles CPU::opcode_sbc_a_hl(){ 
+    const int result = A.value() - memory.read(HL.value()) - F.flag_carry();
+    A.set(result);
+
+    F.set_flag_zero(result == 0);
+    F.set_flag_subtract(1);
+    F.set_flag_half_carry(A.value()%16 < memory.read(HL.value())%16 + F.flag_carry()%16);
+    F.set_flag_carry(result < 0);
     
     Cycles cycles(2);
     return cycles;
@@ -500,7 +529,14 @@ Cycles CPU::opcode_sbc_a_hl(){
 }
 
 
-Cycles CPU::opcode_sbc_a_n8(){ 
+Cycles CPU::opcode_sbc_a_n8(u8 n8){ 
+    const int result = A.value() - n8 - F.flag_carry();
+    A.set(result);
+
+    F.set_flag_zero(result == 0);
+    F.set_flag_subtract(1);
+    F.set_flag_half_carry(A.value()%16 < n8%16 + F.flag_carry()%16);
+    F.set_flag_carry(result < 0);
     
     Cycles cycles(2);
     return cycles;
@@ -510,7 +546,23 @@ Cycles CPU::opcode_sbc_a_n8(){
 
 
 
-Cycles CPU::opcode_sub_a_r8(){ 
+
+
+
+
+
+
+
+
+Cycles CPU::opcode_sub_a_r8(Register& R){ 
+    const int result = A.value() - R.value();
+    A.set(result);
+
+    F.set_flag_zero(result == 0);
+    F.set_flag_subtract(1);
+    F.set_flag_half_carry(A.value()%16 < R.value()%16);
+    F.set_flag_carry(result < 0);
+    
     Cycles cycles(1);
     return cycles;
     
@@ -518,14 +570,28 @@ Cycles CPU::opcode_sub_a_r8(){
 
 
 Cycles CPU::opcode_sub_a_hl(){ 
-    
+    const int result = A.value() - memory.read(HL.value());
+    A.set(result);
+
+    F.set_flag_zero(result == 0);
+    F.set_flag_subtract(1);
+    F.set_flag_half_carry(A.value()%16 < memory.read(HL.value())%16);
+    F.set_flag_carry(result < 0);
+   
     Cycles cycles(2);
     return cycles;
     
 }
 
 
-Cycles CPU::opcode_sub_a_n8(){ 
+Cycles CPU::opcode_sub_a_n8(u8 n8){ 
+    const int result = A.value() - n8;
+    A.set(result);
+
+    F.set_flag_zero(result == 0);
+    F.set_flag_subtract(1);
+    F.set_flag_half_carry(A.value()%16 < n8%16);
+    F.set_flag_carry(result < 0);
     
     Cycles cycles(2);
     return cycles;

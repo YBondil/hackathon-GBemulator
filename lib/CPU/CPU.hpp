@@ -112,12 +112,12 @@ class CPU {
         Cycles opcode_cp_a_n8(u8 n8);
         Cycles opcode_dec_r8(Register& R);
         Cycles opcode_dec_hl();
-        Cycles opcode_inc_r8();
+        Cycles opcode_inc_r8(Register& R);
         Cycles opcode_inc_hl();
-        Cycles opcode_sbc_a_r8();
+        Cycles opcode_sbc_a_r8(Register& R);
         Cycles opcode_sbc_a_hl();
-        Cycles opcode_sbc_a_n8();
-        Cycles opcode_sub_a_r8();
+        Cycles opcode_sbc_a_n8(u8 n8);
+        Cycles opcode_sub_a_r8(Register& R);
         Cycles opcode_sub_a_hl();
-        Cycles opcode_sub_a_n8();
+        Cycles opcode_sub_a_n8(u8 n8);
 };
