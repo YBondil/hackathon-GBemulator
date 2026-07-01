@@ -1,5 +1,7 @@
 #include "memory.hpp"
 #include "gameboy.hpp"   // définition complète : accès à Gb.ppu / Gb.timer
+#include "readfile.hpp"
+#include <iostream>
 
 namespace {
     constexpr u16 ROM_END    = 0x7FFF;                       // 0x0000-0x7FFF : cartouche
@@ -24,6 +26,9 @@ Memory::Memory( Gameboy& gb, std::vector<u8>& rom)
     : Gb(gb), ROM_Data(rom) {}
 
 auto Memory::read(u16 address) -> u8 {
+    if ((Gb.boot.active()) && (address<=0x00F)){
+        return Gb.boot.read(address);
+    }
     if (address <= ROM_END)
         return address < ROM_Data.size() ? ROM_Data[address] : 0xFF;
     if (address >= VRAM_BEGIN && address <= VRAM_END) return Gb.ppu.read(address);  // délégué PPU
@@ -59,15 +64,41 @@ auto Memory::read_io(u16 address) -> u8 {
 }
 
 void Memory::write_io(u16 address, u8 data) {
+    if (address == 0xFF50) { if (data != 0) Gb.boot.disable(); return; }
     if (address >= TIMER_BEGIN && address <= TIMER_END) Gb.timer.write(address, data);  // délégué Timer
     else if (address >= LCD_BEGIN && address <= LCD_END) Gb.ppu.write(address, data);   // délégué PPU
     else IO[address - IO_BEGIN] = data;
 }
 
 void Memory::tick(Cycles cycle) {
-    Gb.timer.tick(cycle);
+    // les opcodes comptent en M-cycles ; timer et PPU comptent en T-cycles (1 M = 4 T)
+    const Cycles t(cycle.value() * 4);
+
+    Gb.timer.tick(t);
     if (Gb.timer.take_interrupt())
         IO[IF_ADDR - IO_BEGIN] |= IRQ_TIMER;         // lève IF.bit2 (Timer)
+
+    Gb.ppu.tick(t);
+    if (Gb.ppu.take_vblank())
+        IO[IF_ADDR - IO_BEGIN] |= 0x01;              // lève IF.bit0 (VBlank)
 }
 
 bool Memory::boot_rom_active() const { return boot_active; }
+
+
+void Memory::copy_from_file(std::string& file_name) {
+    std::vector<u8> dump = read_file(file_name);
+    if (dump.size() < 0x10000) {
+        std::cerr << "Dump memoire invalide (" << dump.size()
+                  << " octets, attendu 65536) : " << file_name << std::endl;
+        return;
+    }
+
+    // ROM (0x0000-0x7FFF) : write() ignore les ecritures ROM -> chargee directement
+    ROM_Data.assign(dump.begin(), dump.begin() + 0x8000);
+
+    // 0x8000-0xFFFF : on passe par write(), qui route vers PPU / Timer / IO / WRAM...
+    for (int addr = 0x8000; addr <= 0xFFFF; ++addr) {
+        write(static_cast<u16>(addr), dump[addr]);
+    }
+}

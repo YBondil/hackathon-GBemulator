@@ -1,14 +1,14 @@
 #include "utils/definitions.hpp"
 #include "utils/readfile.hpp"
 #include "gameboy.hpp"
+#include "video/screen.hpp"
 #include <iostream>
-#include <iomanip>
 #include <string>
 #include <vector>
-
-constexpr int MAX_INSTRUCTIONS = 30;
+#include <array>
 
 auto main(int argc, char* argv[]) -> int {
+    // chargement rom
     const std::string rom_path = (argc > 1) ? argv[1] : "";
     if (rom_path == "") {
         std::cerr << "Usage : gbemu <rom>" << std::endl;
@@ -22,15 +22,15 @@ auto main(int argc, char* argv[]) -> int {
     std::cout << "ROM chargee : " << rom_path << " (" << rom.size()
               << " octets)" << std::endl;
 
-    Gameboy gb(std::move(rom));
+    //Boot
+    std::vector<u8> boot = read_file("roms/dmg_boot.bin");   // 256 octets
+    Gameboy gb(std::move(rom), std::move(boot));
+    std::string dump = "roms/exports_memoire/out_9607920854581853450.bin";
+    gb.load_memory(dump);
 
-    for (int i = 0; i < MAX_INSTRUCTIONS; ++i) {
-        std::cout << "[" << std::setw(2) << i << "] PC=0x"
-                  << std::hex << std::setw(4) << std::setfill('0') << gb.pc()
-                  << std::dec << std::setfill(' ') << std::endl;
-        gb.step();
-    }
-
-    std::cout << "fin" << std::endl;
+    Screen screen(4);
+    gb.render_once();
+    while (!screen.should_close())
+        screen.draw(gb.framebuffer());
     return 0;
 }

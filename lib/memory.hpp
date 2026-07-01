@@ -1,6 +1,7 @@
 #pragma once
 #include "definitions.hpp"
 #include <vector>
+#include <string>
 #include <array>
 
 class Gameboy;   // forward declaration : évite l'inclusion circulaire avec gameboy.hpp
@@ -18,6 +19,8 @@ class Memory {
         void write(u16 address, u8 data);
         void tick(Cycles cycle);            // avance le timer + lève IF au débordement
         bool boot_rom_active() const;
+
+        void copy_from_file(std::string& file_name);
 
     private:
         auto read_io(u16 address) -> u8;
