@@ -179,6 +179,16 @@ Cycles CPU::opcode_bit_u3_HL(u8 bit){
 }
 
 
+Cycles CPU:: opcode_ccf(){
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(true);
+    F.set_flag_carry(!F.flag_carry());
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+
 Cycles CPU::opcode_cpl(){
     u8 A_value = A.value();
     u8 result = ~A_value;   //Vérifier si ~A_value existe bien ; peut-être doit être passé en argument à la fonction 
@@ -740,7 +750,35 @@ Cycles CPU::opcode_rlc_A(){
 }
 
 
+Cycles CPU::opcode_set_u3_r8(u8 bit, Register& R){
+    u8 value = R.value();
+    R.set(value |= (1 << bit));
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_set_u3_HL(u8 bit){
+    u8 value = memory.read(HL.value());
+    memory.write(HL.value(), value |= (1 << bit));
+
+    Cycles cycles(4);
+    return cycles;
+}
+
+
 /*Faire le STOP j'ai du mal à voir ce qui est attendu*/
+
+
+Cycles CPU::opcode_scf(){
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(true);
+
+    Cycles cycles(1);
+    return cycles;
+}
 
 
 /*XOR*/

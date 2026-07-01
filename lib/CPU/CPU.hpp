@@ -77,6 +77,8 @@ class CPU {
         auto opcode_bit_u3_r8(u8 bit, Register& R)->Cycles;
         auto opcode_bit_u3_HL(u8 bit)->Cycles;
 
+        auto opcode_ccf()->Cycles;
+
         auto opcode_cpl()->Cycles;  /*Vérifier si ~A_value existe bien*/
 
         auto opcode_daa()->Cycles;
@@ -145,6 +147,11 @@ class CPU {
         auto opcode_rlc_r8(Register& R)->Cycles;
         auto opcode_rlc_HL()->Cycles;
         auto opcode_rlc_A()->Cycles;
+
+        auto opcode_set_u3_r8(u8 bit, Register& R)->Cycles;
+        auto opcode_set_u3_HL(u8 bit)->Cycles;
+
+        auto opcode_scf()->Cycles;
 
         /*Faire le STOP, j'ai un doute sur comment faire*/
 
