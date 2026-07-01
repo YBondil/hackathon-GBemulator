@@ -70,6 +70,8 @@ class CPU {
         auto opcode_add_HL_SP(u8 value, u8 reg)->Cycles;
         auto opcode_add_SP_s8(s8 n)->Cycles;
 
+        auto opcode_daa()->Cycles;
+
         auto opcode_dec_r8(Register& R)->Cycles;
         auto opcode_dec_SP()->Cycles;
 

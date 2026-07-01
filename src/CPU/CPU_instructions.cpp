@@ -104,6 +104,42 @@ Cycles CPU::opcode_add_SP_s8(s8 n){
 }
 
 
+Cycles CPU::opcode_daa(){
+    u8 A_value = A.value();
+    u8 correction = 0;
+    bool set_carry = false;
+
+    if(!F.flag_subtract()){
+        if(F.flag_half_carry() || (A_value & 0x0F) > 9){
+            correction |= 0x06;
+        }
+        if(F.flag_carry() || A_value > 0x99){
+            correction |= 0x60;
+            set_carry = true;
+        }
+        A.set(A_value + correction);
+    }
+
+    else{
+        if(F.flag_half_carry()){
+            correction |= 0x06;
+        }
+        if(F.flag_carry()){
+            correction |= 0x60;
+            set_carry = true;
+        }
+        A.set(A_value - correction);
+    }
+
+    F.set_flag_zero(A.value() == 0);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(set_carry);
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+
 /*DEC*/
 
 Cycles CPU::opcode_dec_r8(Register& R){
@@ -614,3 +650,5 @@ Cycles CPU::opcode_rlc_A(){
     Cycles cycles(1);
     return cycles;
 }
+
+/*Faire le STOP j'ai du mal à voir ce qui est attendu*/
