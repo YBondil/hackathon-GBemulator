@@ -3,7 +3,7 @@
 
 /*ADC*/
 
-Cycles CPU::_opcode_adc(u8 value){
+Cycles CPU::opcode_adc_A_r8(u8 value){
     u8 reg = A.value();
     u8 carry = F.flag_carry_value();
 
@@ -21,16 +21,16 @@ Cycles CPU::_opcode_adc(u8 value){
 }
 
 
-Cycles CPU::opcode_adc_HL(){
+Cycles CPU::opcode_adc_A_HL(){
     u8 value = memory.read(HL.value());
-    _opcode_adc(value);
+    opcode_adc_A_r8(value);
     Cycles cycles(2);
     return cycles;
 }
 
 
-Cycles CPU::opcode_adc_n8(u8 value){
-    _opcode_adc(value);
+Cycles CPU::opcode_adc_A_n8(u8 value){
+    opcode_adc_A_r8(value);
     Cycles cycles(2);
     return cycles;
 }
@@ -38,7 +38,7 @@ Cycles CPU::opcode_adc_n8(u8 value){
 
 /*ADD*/
 
-Cycles CPU::_opcode_add(u8 reg, u8 value){
+Cycles CPU::opcode_add_A_r8(u8 reg, u8 value){
     u8 result = reg + value;
     A.set(static_cast<u8>(result));
 
@@ -53,14 +53,14 @@ Cycles CPU::_opcode_add(u8 reg, u8 value){
 
 Cycles CPU::opcode_add_A_HL(){
     u8 value = memory.read(HL.value());
-    _opcode_add(A.value(), value);     // A = A + mem[HL]
+    opcode_add_A_r8(A.value(), value);     // A = A + mem[HL]
     Cycles cycles(2);
     return cycles;
 }
 
 
 Cycles CPU::opcode_add_A_n8(u8 value, u8 reg){
-    _opcode_add(value,reg);
+    opcode_add_A_r8(value,reg);
 
     Cycles cycles(2);
     return cycles;
@@ -500,12 +500,12 @@ Cycles CPU::opcode_inc_hl(){
 
 
 Cycles CPU::opcode_sbc_a_r8(Register& R){ 
-    const int result = A.value() - R.value() - F.flag_carry();
+    const int result = A.value() - R.value() - F.flag_carry_value();
     A.set(result);
 
     F.set_flag_zero(result == 0);
     F.set_flag_subtract(1);
-    F.set_flag_half_carry(A.value()%16 < R.value()%16 + F.flag_carry()%16);
+    F.set_flag_half_carry(A.value()%16 < R.value()%16 + F.flag_carry_value()%16);
     F.set_flag_carry(result < 0);
     
     Cycles cycles(1);
@@ -515,12 +515,12 @@ Cycles CPU::opcode_sbc_a_r8(Register& R){
 
 
 Cycles CPU::opcode_sbc_a_hl(){ 
-    const int result = A.value() - memory.read(HL.value()) - F.flag_carry();
+    const int result = A.value() - memory.read(HL.value()) - F.flag_carry_value();
     A.set(result);
 
     F.set_flag_zero(result == 0);
     F.set_flag_subtract(1);
-    F.set_flag_half_carry(A.value()%16 < memory.read(HL.value())%16 + F.flag_carry()%16);
+    F.set_flag_half_carry(A.value()%16 < memory.read(HL.value())%16 + F.flag_carry_value()%16);
     F.set_flag_carry(result < 0);
     
     Cycles cycles(2);
@@ -530,12 +530,12 @@ Cycles CPU::opcode_sbc_a_hl(){
 
 
 Cycles CPU::opcode_sbc_a_n8(u8 n8){ 
-    const int result = A.value() - n8 - F.flag_carry();
+    const int result = A.value() - n8 - F.flag_carry_value();
     A.set(result);
 
     F.set_flag_zero(result == 0);
     F.set_flag_subtract(1);
-    F.set_flag_half_carry(A.value()%16 < n8%16 + F.flag_carry()%16);
+    F.set_flag_half_carry(A.value()%16 < n8%16 + F.flag_carry_value()%16);
     F.set_flag_carry(result < 0);
     
     Cycles cycles(2);
@@ -596,5 +596,26 @@ Cycles CPU::opcode_sub_a_n8(u8 n8){
     Cycles cycles(2);
     return cycles;
     
+}
+
+
+
+
+
+
+// 16-bit arithmetic instructions
+
+
+Cycles CPU::opcode_add_HL_r16(Register16& R){
+    const int result = HL.value() + R.value();
+    HL.set(result);
+    int bit12_HL = bitwise::check_bit(HL.value(),12); 
+    int bit12_R = bitwise::check_bit(R.value(),12);
+    F.set_flag_subtract(0);
+    F.set_flag_half_carry(bit12_HL + bit12_R != bitwise::check_bit(result,12));
+    F.set_flag_carry(static_cast<int>(HL.value()) + static_cast<int>(R.value()) >= 2e16);
+
+    Cycles cycles(2);
+    return cycles;
 }
 

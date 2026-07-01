@@ -47,11 +47,11 @@ class CPU {
         auto handle_interrupts()-> Cycles ;
 
         //OPCodes
-        auto _opcode_adc(u8 value)->Cycles;
-        auto opcode_adc_HL()->Cycles;
-        auto opcode_adc_n8(u8 value)->Cycles;
+        auto opcode_adc_A_r8(u8 value)->Cycles;
+        auto opcode_adc_A_HL()->Cycles;
+        auto opcode_adc_A_n8(u8 value)->Cycles;
 
-        auto _opcode_add(u8 reg, u8 value)->Cycles;
+        auto opcode_add_A_r8(u8 reg, u8 value)->Cycles;
         auto opcode_add_A_HL()->Cycles;
         auto opcode_add_A_n8(u8 value, u8 reg)->Cycles;
 
@@ -120,4 +120,9 @@ class CPU {
         Cycles opcode_sub_a_r8(Register& R);
         Cycles opcode_sub_a_hl();
         Cycles opcode_sub_a_n8(u8 n8);
+
+
+        // 16-bit arithmetic instructions
+
+        Cycles opcode_add_HL_r16(Register16& R);
 };
