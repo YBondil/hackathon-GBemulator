@@ -17,10 +17,16 @@ void CPU::run() {
             u8 opcode = fetch8();
             cycle = run_opcode(opcode);
         }
-        if (latent_enable){
+        if (latent_enable){         //gestion de EI
             latent_enable = false;
             IME = true;
         }
+        if (latent_call){           //gestion de CALL
+            latent_call = false;
+            SP.set(PC);
+            PC = adress_call;
+        }
+
         memory.tick(cycle); //gestion ticks ppu etc
     }
 }
