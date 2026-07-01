@@ -569,5 +569,6 @@ Cycles CPU::opcode_rlc_A(){
     F.set_flag_carry(new_carry);
     
     Cycles cycles(1);
-    return cycles;
+    return cycles; 
 }
+
