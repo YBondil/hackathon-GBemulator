@@ -73,6 +73,11 @@ class CPU {
         auto opcode_dec_r8(Register& R)->Cycles;
         auto opcode_dec_SP()->Cycles;
 
+        auto opcode_inc_r8(Register& R)->Cycles;
+        auto opcode_inc_HL()->Cycles;
+        auto opcode_inc_r16(RegisterPair& R)->Cycles;
+        auto opcode_inc_SP()->Cycles;
+
         auto _opcode_ld(Register& R1, Register& R2)->Cycles;
         auto opcode_ld_n8(u8 n, Register& R)->Cycles;
         auto opcode_ld_n16(u16 n, RegisterPair& R)->Cycles;

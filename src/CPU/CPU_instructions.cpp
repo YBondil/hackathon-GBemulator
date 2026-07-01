@@ -130,6 +130,53 @@ Cycles CPU::opcode_dec_SP(){
 }
 
 
+/*INC*/
+
+Cycles CPU::opcode_inc_r8(Register& R){
+    u8 value = R.value();
+    u8 result = value + 1;
+    R.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry((value & 0xf) + 1 > 0xf);
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+Cycles CPU::opcode_inc_HL(){
+    u8 value = memory.read(HL.value());
+    u8 result = value + 1;
+    memory.write(HL.value(), result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry((value & 0xf) + 1 > 0xf);
+
+    Cycles cycles(3);
+    return cycles;
+}
+
+Cycles CPU::opcode_inc_r16(RegisterPair& R){
+    u16 value = R.value();
+    u16 result = value + 1;
+    R.set(result);
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+Cycles CPU::opcode_inc_SP(){
+    u8 value = memory.read(SP.value());
+    u8 result = value + 1;
+    memory.write(SP.value(), result);
+    
+    Cycles cycles(2);
+    return cycles;
+}
+
+
 /*Loadouts*/
 
 Cycles CPU::_opcode_ld(Register& R1, Register& R2){
