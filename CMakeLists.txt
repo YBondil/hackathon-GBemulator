@@ -26,10 +26,8 @@ add_executable(gbemu
     src/CPU/CPU.cpp
     src/CPU/CPU_instructions.cpp
     src/timer.cpp
-    src/video/colors.cpp
-    src/video/framebuffer.cpp
-    src/video/screen.cpp
     src/memory.cpp
+    src/video/PPU.cpp
 )
 
 # Headers du projet (lib/utils/*.hpp).

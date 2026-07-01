@@ -9,17 +9,23 @@ auto CPU::fetch16() -> u16 {
 }
 auto CPU::fetch_s8() -> s8 { return static_cast<s8>(fetch8()); }
 
-void CPU::run() {
-    while (isRunning) {
-        Cycles cycle = handle_interrupts();
+// Exécute une seule instruction (ou sert une interruption en attente).
+auto CPU::step() -> Cycles {
+    Cycles cycle = handle_interrupts();
 
-        if (cycle.value() == 0) {
-            u8 opcode = fetch8();
-            cycle = run_opcode(opcode);
-        }
-
-        memory.tick(cycle); //gestion ticks ppu etc
+    if (cycle.value() == 0) {
+        u8 opcode = fetch8();
+        cycle = run_opcode(opcode);
     }
+
+    memory.tick(cycle); //gestion ticks ppu etc
+    return cycle;
+}
+
+auto CPU::pc() const -> u16 { return PC; }
+
+void CPU::run() {
+    while (isRunning) step();
 }
 
 auto CPU::handle_interrupts() -> Cycles {
@@ -73,4 +79,4 @@ Cycles CPU::run_opcode(u8 opcode) {
     return op(*this);
 }
 
-#include "opcode_mapping.hpp"   // définit opcode_table et cb_table (une seule TU)
+#include "opcode_mapping.hpp"   //laisser l'include ici please

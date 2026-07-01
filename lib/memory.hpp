@@ -11,7 +11,7 @@ class Gameboy;   // forward declaration : évite l'inclusion circulaire avec gam
 // Possède ce que personne d'autre ne gère : ROM, WRAM, OAM, HRAM, I/O (dont IF), IE.
 class Memory {
     public:
-        Memory(std::vector<u8> rom, Gameboy& gb);
+        Memory( Gameboy& gb, std::vector<u8>& rom);
         ~Memory() = default;
 
         auto read(u16 address) -> u8;

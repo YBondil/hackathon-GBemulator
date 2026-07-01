@@ -1,4 +1,3 @@
-#include <iostream>
 #include "gameboy.hpp"
 #include "video/PPU.hpp"
 namespace {
@@ -72,26 +71,37 @@ void PPU::write(u16 adress, u8 value){
     switch (adress){
         case LCD_CONTROL :
             LDC_control.set(value) ;
+            break ;
         case LCDC_STATUS :
             LCDC_stat.set(value) ;
+            break ;
         case SCY :
             Scroll_Y.set(value) ;
+            break ;
         case SCX :
             Scroll_X.set(value) ;
+            break ;
         case LYC :
             LY_compare.set(value) ;
+            break ;
         case DMA :
             DMA_transf_stard.set(value) ;
+            break ;
         case BGP :
             BG_palette.set(value) ;
+            break ;
         case OBP0 :
             Object_palette_0.set(value) ;
+            break ;
         case OBP1 :
             Object_palette_1.set(value) ;
+            break ;
         case WY :
             Window_Y.set(value) ;
+            break ;
         case WX :
             Window_X.set(value) ;
+            break ;
         default :
             if ((adress >= VRAM_BEGIN) & (adress<= VRAM_END)) {
                 VRAM[adress-0x8000] = value;

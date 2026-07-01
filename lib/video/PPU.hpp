@@ -2,7 +2,6 @@
 #include <vector>
 #include "memory.hpp"
 #include "definitions.hpp"
-#include "timer.hpp"
 #include "registers.hpp"
 class Gameboy ;
 class PPU {
@@ -16,9 +15,7 @@ class PPU {
 
     private :
         Gameboy& Gb;
-
         std::vector<u8> VRAM ;
-
 
         //Registers
         Register LDC_control; // R/W

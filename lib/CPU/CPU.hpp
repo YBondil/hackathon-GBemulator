@@ -19,6 +19,8 @@ class CPU {
               AF(A, F), BC(B, C), DE(D, E), HL(H, L)   // voir #4 et #15
         {}
         auto run() -> void;
+        auto step() -> Cycles;      // exécute UNE instruction, renvoie ses cycles
+        auto pc() const -> u16;     // lecture de PC (debug / trace)
         using Op = Cycles (*)(CPU&);
 
     private :

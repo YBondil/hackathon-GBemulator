@@ -11,20 +11,20 @@ class Gameboy {
     public:
         Gameboy(std::vector<u8> rom)
             : timer(),
-              memory(*this),
+              memory(*this, rom),
               ppu(*this),
-              cpu(memory),
-              ROM(rom)
+              cpu(memory)
         {}
 
         void run() { cpu.run(); }
+        Cycles step() { return cpu.step(); }   // une instruction
+        u16 pc() const { return cpu.pc(); }
 
     private:
         Timer  timer;
         Memory memory;
         PPU    ppu;
         CPU    cpu;
-        std::vector<u8> ROM ;
 
         friend class Memory;
         friend class Timer;

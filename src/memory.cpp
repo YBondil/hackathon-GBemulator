@@ -20,8 +20,8 @@ namespace {
     constexpr u8  IRQ_TIMER = 1 << 2;
 }
 
-Memory::Memory(std::vector<u8> rom, Gameboy& gb)
-    : Gb(gb), ROM_Data(std::move(rom)) {}
+Memory::Memory( Gameboy& gb, std::vector<u8>& rom)
+    : Gb(gb), ROM_Data(rom) {}
 
 auto Memory::read(u16 address) -> u8 {
     if (address <= ROM_END)

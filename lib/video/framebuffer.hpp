@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../utils/definitions.hpp"
+#include "definitions.hpp"
 #include "def_colors.hpp"
 
 #include <vector>
