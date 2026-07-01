@@ -127,8 +127,8 @@ class CPU {
         auto opcode_push_AF()->Cycles;
         auto opcode_push_r16(RegisterPair& R)->Cycles;
 
-        auto opcode_res_u3_r8(Register& R)->Cycles;
-        auto opcode_res_u3_HL()->Cycles;
+        auto opcode_res_u3_r8(u8 u,Register& R)->Cycles;
+        auto opcode_res_u3_HL(u8 u)->Cycles;
         auto opcode_ret()->Cycles;
         auto opcode_ret_cc(Condition_code cc)->Cycles;
         auto opcode_reti()->Cycles;
@@ -158,6 +158,12 @@ class CPU {
 
         auto opcode_scf()->Cycles;
 
-        auto opcode_set_u3_r8(Register& R)->Cycles;
+        auto opcode_set_u3_r8(u8 u, Register& R)->Cycles;
+        auto opcode_set_u3_HL(u8 u )->Cycles;
+
+        auto opcode_sla_r8(Register& R)->Cycles;
+        auto opcode_sla_HL()->Cycles;
+        auto opcode_sra_r8(Register& R)->Cycles;
+        auto opcode_sra_HL()->Cycles;
 
 };
