@@ -100,4 +100,24 @@ class CPU {
         auto opcode_res_u3_HL()->Cycles;
         auto opcode_ret()->Cycles;
         auto opcode_ret_cc()->Cycles;
+
+
+
+
+
+        // 8-bit arithmetic instructions (except those starting with A)
+
+        Cycles opcode_cp_a_r8(Register& R);
+        Cycles opcode_cp_a_hl();
+        Cycles opcode_cp_a_n8(u8 n8);
+        Cycles opcode_dec_r8(Register& R);
+        Cycles opcode_dec_hl();
+        Cycles opcode_inc_r8();
+        Cycles opcode_inc_hl();
+        Cycles opcode_sbc_a_r8();
+        Cycles opcode_sbc_a_hl();
+        Cycles opcode_sbc_a_n8();
+        Cycles opcode_sub_a_r8();
+        Cycles opcode_sub_a_hl();
+        Cycles opcode_sub_a_n8();
 };
