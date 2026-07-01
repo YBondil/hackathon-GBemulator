@@ -479,7 +479,7 @@ Cycles CPU::opcode_reti(){
 
 Cycles CPU::opcode_rl_r8(Register& R){
     u8 R_value = R.value();
-    u8 new_carry = bitwise::bit_value(R_value, 8);
+    u8 new_carry = bitwise::bit_value(R_value, 7);
     u8 result = (R_value << 1) & F.flag_carry_value();
     R.set(result);
     
@@ -495,7 +495,7 @@ Cycles CPU::opcode_rl_r8(Register& R){
 
 Cycles CPU::opcode_rl_HL(){
     u8 HL_value = memory.read(HL.value());
-    u8 new_carry = bitwise::bit_value(HL_value, 8);
+    u8 new_carry = bitwise::bit_value(HL_value, 7);
     u8 result = (HL_value << 1) & F.flag_carry_value();
     memory.write(HL.value(), result);
     
@@ -511,7 +511,7 @@ Cycles CPU::opcode_rl_HL(){
 
 Cycles CPU::opcode_rl_A(){
     u8 A_value = A.value();
-    u8 new_carry = bitwise::bit_value(A_value, 8);
+    u8 new_carry = bitwise::bit_value(A_value, 7);
     u8 result = (A_value << 1) & F.flag_carry_value();
     A.set(result);
     
@@ -527,7 +527,7 @@ Cycles CPU::opcode_rl_A(){
 
 Cycles CPU::opcode_rlc_r8(Register& R){
     u8 R_value = R.value();
-    u8 new_carry = bitwise::bit_value(R_value, 8);
+    u8 new_carry = bitwise::bit_value(R_value, 7);
     u8 result = (R_value << 1) & new_carry;
     R.set(result);
     
@@ -543,7 +543,7 @@ Cycles CPU::opcode_rlc_r8(Register& R){
 
 Cycles CPU::opcode_rlc_HL(){
     u8 HL_value = memory.read(HL.value());
-    u8 new_carry = bitwise::bit_value(HL_value, 8);
+    u8 new_carry = bitwise::bit_value(HL_value, 7);
     u8 result = (HL_value << 1) & new_carry;
     memory.write(HL.value(), result);
     
@@ -559,7 +559,7 @@ Cycles CPU::opcode_rlc_HL(){
 
 Cycles CPU::opcode_rlc_A(){
     u8 A_value = A.value();
-    u8 new_carry = bitwise::bit_value(A_value, 8);
+    u8 new_carry = bitwise::bit_value(A_value, 7);
     u8 result = (A_value << 1) & new_carry;
     A.set(result);
     
@@ -571,3 +571,140 @@ Cycles CPU::opcode_rlc_A(){
     Cycles cycles(1);
     return cycles;
 }
+
+
+Cycles CPU::opcode_rr_r8(Register& R){
+    u8 R_value = R.value();
+    u8 new_carry = bitwise::bit_value(R_value, 0);
+    u8 result = (R_value >> 1) & F.flag_carry_value();
+    R.set(result);
+    
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_rr_HL(){
+    u8 HL_value = memory.read(HL.value());
+    u8 new_carry = bitwise::bit_value(HL_value, 0);
+    u8 result = (HL_value >> 1) & F.flag_carry_value();
+    memory.write(HL.value(), result);
+    
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_rr_A(){
+    u8 A_value = A.value();
+    u8 new_carry = bitwise::bit_value(A_value, 0);
+    u8 result = (A_value >> 1) & F.flag_carry_value();
+    A.set(result);
+    
+    F.set_flag_zero(false);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(1);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_rrc_r8(Register& R){
+    u8 R_value = R.value();
+    u8 new_carry = bitwise::bit_value(R_value, 0);
+    u8 result = (R_value >> 1) & new_carry;
+    R.set(result);
+    
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(2);
+    return cycles;
+}    
+
+
+Cycles CPU::opcode_rrc_HL(){
+    u8 HL_value = memory.read(HL.value());
+    u8 new_carry = bitwise::bit_value(HL_value, 0);
+    u8 result = (HL_value >> 1) & new_carry;
+    memory.write(HL.value(), result);
+    
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(4);
+    return cycles;
+}    
+
+
+Cycles CPU::opcode_rrc_A(){
+    u8 A_value = A.value();
+    u8 new_carry = bitwise::bit_value(A_value, 0);
+    u8 result = (A_value >> 1) & new_carry;
+    A.set(result);
+    
+    F.set_flag_zero(false);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(new_carry);
+    
+    Cycles cycles(1);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_call(u16 adress){
+    adress_call = adress;
+    latent_call = true;
+
+    Cycles cycles(6);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_call_cc(u16 adress, Condition_code cc){
+   if(check_condition(cc)){
+    return opcode_call(adress);
+   }
+   return Cycles(3);
+}
+
+
+Cycles CPU::opcode_rst_vec(u16 vec){
+    opcode_call(vec);
+    Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_scf(){
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(true);
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_set_u3_r8(Register& R){
+    
+}
+
+

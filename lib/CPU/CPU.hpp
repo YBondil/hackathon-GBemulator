@@ -3,9 +3,22 @@
 #include "registers.hpp"
 #include "memory.hpp"
 #include <array>
+#include <vector>
 namespace irq {
     constexpr u16 IF_ADDR = 0xFF0F;
     constexpr u16 IE_ADDR = 0xFFFF;
+};
+
+//RST Vectors
+namespace RST {
+    const u16 rst1 = 0x00;
+    const u16 rst2 = 0x08; 
+    const u16 rst3 = 0x10; 
+    const u16 rst4 = 0x18; 
+    const u16 rst5 = 0x20; 
+    const u16 rst6 = 0x28; 
+    const u16 rst7 = 0x30; 
+    const u16 rst8 = 0x38;
 };
 
 class CPU {
@@ -28,6 +41,7 @@ class CPU {
             NC,
         };
 
+
     private :
         Cycles run_opcode(u8 opcode) ;
         Memory& memory ;
@@ -45,7 +59,11 @@ class CPU {
 
         //Interrupt Master Enable
         bool IME = false ;
-        bool latent_enable = false ;
+        bool latent_enable = false ;            //s'active si EI est appelé
+
+        //Call
+        bool latent_call = false ;              //s'active si CALL est appelé
+        u16 adress_call;
 
         //registers
         Register A,B,C,D,E,H,L ;
@@ -123,5 +141,23 @@ class CPU {
 
         auto opcode_rlc_r8(Register& R)->Cycles;
         auto opcode_rlc_HL()->Cycles;
-         auto opcode_rlc_A()->Cycles;
+        auto opcode_rlc_A()->Cycles;
+
+        auto opcode_rr_r8(Register& R)->Cycles;
+        auto opcode_rr_HL()->Cycles;
+        auto opcode_rr_A()->Cycles;
+        
+        auto opcode_rrc_r8(Register& R)->Cycles;
+        auto opcode_rrc_HL()->Cycles;
+        auto opcode_rrc_A()->Cycles;
+
+        auto opcode_call(u16 adress)->Cycles;
+        auto opcode_call_cc(u16 adress, Condition_code cc)->Cycles;
+
+        auto opcode_rst_vec(u16 vec)->Cycles;
+
+        auto opcode_scf()->Cycles;
+
+        auto opcode_set_u3_r8(Register& R)->Cycles;
+
 };
