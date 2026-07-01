@@ -85,7 +85,7 @@ class CPU {
         auto _opcode_add(u8 reg, u8 value)->Cycles;
         auto opcode_add_A_HL()->Cycles;
         auto opcode_add_A_n8(u8 value, u8 reg)->Cycles;
-        auto opcode_add_HL_SP(u8 value, u8 reg)->Cycles;
+        auto opcode_add_HL_SP()->Cycles;
         auto opcode_add_SP_s8(s8 n)->Cycles;
 
         auto opcode_and_A_r8(Register& R)->Cycles;
@@ -197,9 +197,26 @@ class CPU {
 
         auto opcode_scf()->Cycles;
 
-        /*Faire le STOP, j'ai un doute sur comment faire*/
-
         auto opcode_xor_A_r8(Register& R)->Cycles;
         auto opcode_xor_A_HL()->Cycles;
         auto opcode_xor_A_n8(u8 n)->Cycles;
+        auto opcode_ret_cc()->Cycles;
+
+        // 8-bit arithmetic instructions (except those starting with A)
+
+        auto opcode_cp_a_r8(Register& R)->Cycles;
+        auto opcode_cp_a_hl()->Cycles;
+        auto opcode_cp_a_n8(u8 n8)->Cycles;
+        auto opcode_dec_r8(Register& R)->Cycles;
+        auto opcode_dec_hl()->Cycles;
+        auto opcode_inc_r8(Register& R)->Cycles;
+        auto opcode_inc_hl()->Cycles;
+        auto opcode_sbc_a_r8(Register& R)->Cycles;
+
+        auto opcode_sbc_a_hl()->Cycles;
+        auto opcode_sbc_a_n8(u8 n8)->Cycles;
+        auto opcode_sub_a_r8(Register& R)->Cycles;
+
+        auto opcode_sub_a_hl()->Cycles;
+        auto opcode_sub_a_n8(u8 n8)->Cycles;
 };
