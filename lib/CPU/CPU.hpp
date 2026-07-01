@@ -70,6 +70,12 @@ class CPU {
         auto opcode_add_HL_SP(u8 value, u8 reg)->Cycles;
         auto opcode_add_SP_s8(s8 n)->Cycles;
 
+        auto opcode_and_A_r8(Register& R)->Cycles;
+        auto opcode_and_A_HL()->Cycles;
+        auto opcode_and_A_n8(u8 n)->Cycles;
+
+        auto opcode_cpl()->Cycles;  /*Vérifier si ~A_value existe bien*/
+
         auto opcode_daa()->Cycles;
 
         auto opcode_dec_r8(Register& R)->Cycles;
@@ -136,4 +142,10 @@ class CPU {
         auto opcode_rlc_r8(Register& R)->Cycles;
         auto opcode_rlc_HL()->Cycles;
         auto opcode_rlc_A()->Cycles;
+
+        /*Faire le STOP, j'ai un doute sur comment faire*/
+
+        auto opcode_xor_A_r8(Register& R)->Cycles;
+        auto opcode_xor_A_HL()->Cycles;
+        auto opcode_xor_A_n8(u8 n)->Cycles;
 };

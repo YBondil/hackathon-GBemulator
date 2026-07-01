@@ -104,6 +104,68 @@ Cycles CPU::opcode_add_SP_s8(s8 n){
 }
 
 
+/*AND*/
+
+Cycles CPU::opcode_and_A_r8(Register& R){
+    u8 R_value = R.value();
+    u8 A_value = A.value();
+    u8 result = R_value && A_value;
+    A.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(true);
+    F.set_flag_carry(false);
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_and_A_HL(){
+    u8 value = memory.read(HL.value());
+    u8 A_value = A.value();
+    u8 result = value && A_value;
+    A.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(true);
+    F.set_flag_carry(false);
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_and_A_n8(u8 n){
+    u8 A_value = A.value();
+    u8 result = n && A_value;
+    A.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(true);
+    F.set_flag_carry(false);
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_cpl(){
+    u8 A_value = A.value();
+    u8 result = ~A_value;   //Vérifier si ~A_value existe bien ; peut-être doit être passé en argument à la fonction 
+    A.set(result);
+
+    F.set_flag_subtract(true);
+    F.set_flag_half_carry(true);
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+
 Cycles CPU::opcode_daa(){
     u8 A_value = A.value();
     u8 correction = 0;
@@ -651,4 +713,54 @@ Cycles CPU::opcode_rlc_A(){
     return cycles;
 }
 
+
 /*Faire le STOP j'ai du mal à voir ce qui est attendu*/
+
+
+/*XOR*/
+
+Cycles CPU::opcode_xor_A_r8(Register& R){
+    u8 R_value = R.value();
+    u8 A_value = A.value();
+    u8 result = R_value ^ A_value;
+    A.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(false);
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_xor_A_HL(){
+    u8 value = memory.read(HL.value());
+    u8 A_value = A.value();
+    u8 result = value ^ A_value;
+    A.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(false);
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_xor_A_n8(u8 n){
+    u8 A_value = A.value();
+    u8 result = n ^ A_value;
+    A.set(result);
+
+    F.set_flag_zero(result==0);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(false);
+    F.set_flag_carry(false);
+
+    Cycles cycles(2);
+    return cycles;
+}
