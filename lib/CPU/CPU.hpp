@@ -3,7 +3,6 @@
 #include "registers.hpp"
 #include "memory.hpp"
 #include <array>
-#include <vector>
 namespace irq {
     constexpr u16 IF_ADDR = 0xFF0F;
     constexpr u16 IE_ADDR = 0xFFFF;
@@ -12,12 +11,12 @@ namespace irq {
 //RST Vectors
 namespace RST {
     const u16 rst1 = 0x00;
-    const u16 rst2 = 0x08; 
-    const u16 rst3 = 0x10; 
-    const u16 rst4 = 0x18; 
-    const u16 rst5 = 0x20; 
-    const u16 rst6 = 0x28; 
-    const u16 rst7 = 0x30; 
+    const u16 rst2 = 0x08;
+    const u16 rst3 = 0x10;
+    const u16 rst4 = 0x18;
+    const u16 rst5 = 0x20;
+    const u16 rst6 = 0x28;
+    const u16 rst7 = 0x30;
     const u16 rst8 = 0x38;
 };
 
@@ -169,7 +168,7 @@ class CPU {
         auto opcode_rr_r8(Register& R)->Cycles;
         auto opcode_rr_HL()->Cycles;
         auto opcode_rr_A()->Cycles;
-        
+
         auto opcode_rrc_r8(Register& R)->Cycles;
         auto opcode_rrc_HL()->Cycles;
         auto opcode_rrc_A()->Cycles;
@@ -186,16 +185,12 @@ class CPU {
 
         auto opcode_sla_r8(Register& R)->Cycles;
         auto opcode_sla_HL()->Cycles;
-        
+
         auto opcode_sra_r8(Register& R)->Cycles;
         auto opcode_sra_HL()->Cycles;
-        
+
         auto opcode_srl_r8(Register& R)->Cycles;
         auto opcode_srl_HL()->Cycles;
-        auto opcode_set_u3_r8(u8 bit, Register& R)->Cycles;
-        auto opcode_set_u3_HL(u8 bit)->Cycles;
-
-        auto opcode_scf()->Cycles;
 
         auto opcode_xor_A_r8(Register& R)->Cycles;
         auto opcode_xor_A_HL()->Cycles;
@@ -207,9 +202,7 @@ class CPU {
         auto opcode_cp_a_r8(Register& R)->Cycles;
         auto opcode_cp_a_hl()->Cycles;
         auto opcode_cp_a_n8(u8 n8)->Cycles;
-        auto opcode_dec_r8(Register& R)->Cycles;
         auto opcode_dec_hl()->Cycles;
-        auto opcode_inc_r8(Register& R)->Cycles;
         auto opcode_inc_hl()->Cycles;
         auto opcode_sbc_a_r8(Register& R)->Cycles;
 
