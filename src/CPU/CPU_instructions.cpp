@@ -153,6 +153,32 @@ Cycles CPU::opcode_and_A_n8(u8 n){
 }
 
 
+Cycles CPU::opcode_bit_u3_r8(u8 bit, Register& R){
+    u8 value = R.value();
+    bool bit_set = bitwise::check_bit(value, bit);
+
+    F.set_flag_zero(!bit_set);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(true);
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_bit_u3_HL(u8 bit){
+    u8 value = memory.read(HL.value());
+    bool bit_set = bitwise::check_bit(value, bit);
+
+    F.set_flag_zero(!bit_set);
+    F.set_flag_subtract(false);
+    F.set_flag_half_carry(true);
+
+    Cycles cycles(3);
+    return cycles;
+}
+
+
 Cycles CPU::opcode_cpl(){
     u8 A_value = A.value();
     u8 result = ~A_value;   //Vérifier si ~A_value existe bien ; peut-être doit être passé en argument à la fonction 

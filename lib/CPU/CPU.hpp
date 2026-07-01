@@ -74,6 +74,9 @@ class CPU {
         auto opcode_and_A_HL()->Cycles;
         auto opcode_and_A_n8(u8 n)->Cycles;
 
+        auto opcode_bit_u3_r8(u8 bit, Register& R)->Cycles;
+        auto opcode_bit_u3_HL(u8 bit)->Cycles;
+
         auto opcode_cpl()->Cycles;  /*Vérifier si ~A_value existe bien*/
 
         auto opcode_daa()->Cycles;
