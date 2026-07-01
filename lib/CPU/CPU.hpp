@@ -85,6 +85,29 @@ class CPU {
         auto _opcode_add(u8 reg, u8 value)->Cycles;
         auto opcode_add_A_HL()->Cycles;
         auto opcode_add_A_n8(u8 value, u8 reg)->Cycles;
+        auto opcode_add_HL_SP(u8 value, u8 reg)->Cycles;
+        auto opcode_add_SP_s8(s8 n)->Cycles;
+
+        auto opcode_and_A_r8(Register& R)->Cycles;
+        auto opcode_and_A_HL()->Cycles;
+        auto opcode_and_A_n8(u8 n)->Cycles;
+
+        auto opcode_bit_u3_r8(u8 bit, Register& R)->Cycles;
+        auto opcode_bit_u3_HL(u8 bit)->Cycles;
+
+        auto opcode_ccf()->Cycles;
+
+        auto opcode_cpl()->Cycles;  /*Vérifier si ~A_value existe bien*/
+
+        auto opcode_daa()->Cycles;
+
+        auto opcode_dec_r8(Register& R)->Cycles;
+        auto opcode_dec_SP()->Cycles;
+
+        auto opcode_inc_r8(Register& R)->Cycles;
+        auto opcode_inc_HL()->Cycles;
+        auto opcode_inc_r16(RegisterPair& R)->Cycles;
+        auto opcode_inc_SP()->Cycles;
 
         auto _opcode_ld(Register& R1, Register& R2)->Cycles;
         auto opcode_ld_n8(u8 n, Register& R)->Cycles;
@@ -113,7 +136,7 @@ class CPU {
         auto opcode_ld_n16_SP(const u16 adress)->Cycles;
         auto opcode_ld_HL_SP_s8(s8 n)->Cycles;
 
-        auto opcode_SP_HL()->Cycles;
+        auto opcode_ld_SP_HL()->Cycles;
 
         auto opcode_nop()->Cycles;
 
@@ -169,4 +192,14 @@ class CPU {
         
         auto opcode_srl_r8(Register& R)->Cycles;
         auto opcode_srl_HL()->Cycles;
+        auto opcode_set_u3_r8(u8 bit, Register& R)->Cycles;
+        auto opcode_set_u3_HL(u8 bit)->Cycles;
+
+        auto opcode_scf()->Cycles;
+
+        /*Faire le STOP, j'ai un doute sur comment faire*/
+
+        auto opcode_xor_A_r8(Register& R)->Cycles;
+        auto opcode_xor_A_HL()->Cycles;
+        auto opcode_xor_A_n8(u8 n)->Cycles;
 };
