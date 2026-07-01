@@ -67,6 +67,11 @@ class CPU {
         auto _opcode_add(u8 reg, u8 value)->Cycles;
         auto opcode_add_A_HL()->Cycles;
         auto opcode_add_A_n8(u8 value, u8 reg)->Cycles;
+        auto opcode_add_HL_SP(u8 value, u8 reg)->Cycles;
+        auto opcode_add_SP_s8(s8 n)->Cycles;
+
+        auto opcode_dec_r8(Register& R)->Cycles;
+        auto opcode_dec_SP()->Cycles;
 
         auto _opcode_ld(Register& R1, Register& R2)->Cycles;
         auto opcode_ld_n8(u8 n, Register& R)->Cycles;
@@ -95,7 +100,7 @@ class CPU {
         auto opcode_ld_n16_SP(const u16 adress)->Cycles;
         auto opcode_ld_HL_SP_s8(s8 n)->Cycles;
 
-        auto opcode_SP_HL()->Cycles;
+        auto opcode_ld_SP_HL()->Cycles;
 
         auto opcode_nop()->Cycles;
 
@@ -123,5 +128,5 @@ class CPU {
 
         auto opcode_rlc_r8(Register& R)->Cycles;
         auto opcode_rlc_HL()->Cycles;
-         auto opcode_rlc_A()->Cycles;
+        auto opcode_rlc_A()->Cycles;
 };
