@@ -26,9 +26,13 @@ add_executable(gbemu
     src/CPU/CPU.cpp
     src/CPU/CPU_instructions.cpp
     src/timer.cpp
+    src/video/colors.cpp
+    src/video/framebuffer.cpp
+    src/video/screen.cpp
+    src/memory.cpp
 )
 
 # Headers du projet (lib/utils/*.hpp).
-target_include_directories(gbemu PRIVATE lib lib/utils lib/CPU)
+target_include_directories(gbemu PRIVATE lib lib/utils lib/CPU lib/video)
 
 target_link_libraries(gbemu PRIVATE raylib)

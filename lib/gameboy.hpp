@@ -1,22 +1,31 @@
-#include "CPU.hpp"
+#pragma once
+#include "definitions.hpp"
+#include "CPU/CPU.hpp"
+#include "video/PPU.hpp"
 #include "memory.hpp"
 #include "timer.hpp"
-// #include "video.hpp"
-// #include "inputs.hpp"
+#include <vector>
 
 
 class Gameboy {
-    public :
-        Gameboy() = default;
+    public:
+        Gameboy(std::vector<u8> rom)
+            : timer(),
+              memory(*this),
+              ppu(*this),
+              cpu(memory),
+              ROM(rom)
+        {}
 
-    private :
-        void tick();
-        CPU cpu;
-        friend class CPU;
+        void run() { cpu.run(); }
 
+    private:
+        Timer  timer;
         Memory memory;
-        friend class MMU;
+        PPU    ppu;
+        CPU    cpu;
+        std::vector<u8> ROM ;
 
-        Timer timer;
+        friend class Memory;
         friend class Timer;
-}
+};

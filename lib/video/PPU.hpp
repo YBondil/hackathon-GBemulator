@@ -4,21 +4,21 @@
 #include "definitions.hpp"
 #include "timer.hpp"
 #include "registers.hpp"
-
+class Gameboy ;
 class PPU {
     public :
-        PPU(Memory& MMU, Timer& timer);
+        PPU(Gameboy& Gb);
         ~PPU() = default ;
         auto read(u16 adress) -> u8 ;
         void write(u16 adress, u8 value) ;
-
+        void draw() ;
         auto tick()-> void ;
 
     private :
-        Memory& MMU;
-        Timer& timer;
+        Gameboy& Gb;
 
         std::vector<u8> VRAM ;
+
 
         //Registers
         Register LDC_control; // R/W
