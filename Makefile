@@ -1,6 +1,7 @@
-BUILD_DIR = build
-BIN       = $(BUILD_DIR)/gbemu
-ROM       ?= roms/Tetris.gb
+BUILD_DIR  = build
+TEST_DIR   = build-tests
+BIN        = $(BUILD_DIR)/gbemu
+ROM        ?= roms/Tetris.gb
 
 all: build
 
@@ -11,7 +12,12 @@ build:
 run: build
 	@./$(BIN) $(ROM)
 
-clean:
-	@rm -rf $(BUILD_DIR)
+test:
+	@cmake -S tests -B $(TEST_DIR)
+	@cmake --build $(TEST_DIR) -j
+	@ctest --test-dir $(TEST_DIR) --output-on-failure
 
-.PHONY: all build run clean
+clean:
+	@rm -rf $(BUILD_DIR) $(TEST_DIR)
+
+.PHONY: all build run test clean

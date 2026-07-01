@@ -1,38 +1,12 @@
-
-
-
-
-
-
-// #include "gameboy.h"
-// #include "boot.h"
-// #include "serial.h"
-// #include "input.h"
-// #include "timer.h"
-// #include "util/log.h"
-// #include "util/bitwise.h"
-// #include "cpu/cpu.h"
-// #include "video/video.h"
-
-
-#include "../lib/memory.hpp"
-
-#include <iostream>
-
+#include "memory.hpp"
 
 Memory::Memory(){
 
     WRAM = std::vector<u8>(8192);
     OAM = std::vector<u8>(160);
     HRAM = std::vector<u8>(127);
-    
+
 };
-
-
-
-
-
-
 
 u8 Memory::read(u16 address) {
     if (0x0 <= address) && (address <= 0x7FFF) {
@@ -41,7 +15,6 @@ u8 Memory::read(u16 address) {
         }
         return gb.cartridge->read(address);
     }
-
     /* VRAM */
     if (((0x8000 <= address) && (address <= 0x9FFF))) {
         return gb.video.read(address - 0x8000);
@@ -326,7 +299,7 @@ void Memory::write_io(const u16 address, const u8 data) {
             return;
 
 
-            
+
         case 0xFF0F:
             gb.cpu.interrupt_flag.set(data);
             return;
@@ -376,7 +349,7 @@ void Memory::write_io(const u16 address, const u8 data) {
             affiche("Wrote to sound on/off address 0x%x - 0x%x", address, data);
             return;
 
-       
+
         /* TODO: Audio - Wave pattern RAM */
         case 0xFF30:
         case 0xFF31:
@@ -453,8 +426,8 @@ void Memory::write_io(const u16 address, const u8 data) {
             gb.video.window_x.set(data);
             return;
 
-       
-     
+
+
         /* Disable boot rom switch */
         case 0xFF50:
             disable_boot_rom_switch.set(data);
@@ -472,8 +445,8 @@ void Memory::unmapped_io_write(const u16 address, const u8 data) {
     affiche("Attempting to write 0x%x to unused IO address 0x%x ", data, address);
 }
 
-bool Memory::boot_rom_active() const { 
-    return read(0xFF50) != 0x1; 
+bool Memory::boot_rom_active() const {
+    return read(0xFF50) != 0x1;
 }
 
 

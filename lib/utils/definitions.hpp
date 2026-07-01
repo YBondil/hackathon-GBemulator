@@ -15,3 +15,28 @@ template <typename T>
 void affiche(T x){
     std::cout << x << std::endl;
 }
+struct Cycles{
+    public:
+        Cycles(int n): _value(n){};
+        int value (){return _value;};
+
+    private:
+        int _value = 0;
+
+
+};
+
+struct Bytes{
+    public:
+        Bytes(int n): _value(n){};
+        int value(){return _value;};
+
+    private:
+        int _value = 0;
+};
+
+ /* namespace GB_CONST {
+    constexpr int CPU_FREQ = 4194304 ;
+    constexpr int CPU_FREQ_util = 1048576 ;
+    constexpr int T_CYCLE_PER_FRAME = 70224 ;
+}; */
