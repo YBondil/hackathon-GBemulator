@@ -64,7 +64,7 @@ Cycles CPU::_opcode_add(u8 reg, u8 value){
 
 Cycles CPU::opcode_add_A_HL(){
     u8 value = memory.read(HL.value());
-    u8 reg = memory.read(PC);
+    u8 reg = memory.read(A.value());
     _opcode_add(value,reg);
 
     Cycles cycles(2);
@@ -81,7 +81,8 @@ Cycles CPU::opcode_add_A_n8(u8 value, u8 reg){
 
 
 Cycles CPU::opcode_add_HL_SP(){
-    HL.set(SP.value());
+    u16 result = HL.value() + SP.value();
+    HL.set(result);
 
     F.set_flag_subtract(false);
     F.set_flag_half_carry(SP.value() > 0x800);
@@ -91,13 +92,14 @@ Cycles CPU::opcode_add_HL_SP(){
     return cycles;
 }
 
+
 Cycles CPU::opcode_add_SP_s8(s8 n){
-    SP.set(n);
+    SP.set(SP.value() + n);
 
     F.set_flag_zero(false);
     F.set_flag_subtract(false);
-    F.set_flag_half_carry(SP.value() > 0xf);
-    F.set_flag_carry(SP.value() > 0xff);
+    F.set_flag_half_carry(SP.value() > 0x8);
+    F.set_flag_carry(SP.value() > 0x80);
 
     Cycles cycles(4);
     return cycles;
@@ -181,7 +183,7 @@ Cycles CPU::opcode_bit_u3_HL(u8 bit){
 
 Cycles CPU:: opcode_ccf(){
     F.set_flag_subtract(false);
-    F.set_flag_half_carry(true);
+    F.set_flag_half_carry(false);
     F.set_flag_carry(!F.flag_carry());
 
     Cycles cycles(1);
@@ -412,7 +414,7 @@ Cycles CPU::opcode_ld_A_n16(const u16 adress){
 
 
 Cycles CPU::opcode_ldh_A_n16(const u16 adress){                 //Manque l'encadrement des valeurs de adress
-    A.set(adress);
+    A.set(memory.read(adress));
 
     Cycles cycles(4);
     return cycles;
@@ -940,9 +942,9 @@ Cycles CPU::opcode_set_u3_r8(u8 u, Register& R){
 
 
 Cycles CPU::opcode_set_u3_HL(u8 u){
-    u8 value = HL.value();
+    u8 value = memory.read(HL.value());
     bitwise::set_bit_to(value, u, true);
-    HL.set(value);
+    memory.write(HL.value(), value);
 
     Cycles cycles(4);
     return cycles;
