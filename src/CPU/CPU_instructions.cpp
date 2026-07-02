@@ -378,6 +378,7 @@ Cycles CPU::opcode_ret(){
     PC += 1;
     pop_stack8();
     PC += 1;
+    return Cycles(2);
 }
 
 

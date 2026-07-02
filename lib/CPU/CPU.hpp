@@ -3,22 +3,27 @@
 #include "registers.hpp"
 #include "memory.hpp"
 #include <array>
+#include <string>
 namespace irq {
     constexpr u16 IF_ADDR = 0xFF0F;
     constexpr u16 IE_ADDR = 0xFFFF;
 };
 
 class CPU {
-        friend struct CpuTest;   // accès aux membres privés pour les tests unitaires
+        friend struct CpuTest;
     public :
         CPU(Memory& memory)
             : memory(memory),
               isRunning(true),
-              PC(0x0100),            // point d'entrée après le boot ROM
-              SP(0xFFFE),            // valeur d'init
-              AF(A, F), BC(B, C), DE(D, E), HL(H, L)   // voir #4 et #15
+              PC(0x0100),
+              SP(0xFFFE),
+              AF(A, F), BC(B, C), DE(D, E), HL(H, L)
         {}
         auto run() -> void;
+        auto step() -> Cycles;
+        auto pc() const -> u16;
+        void set_pc(u16 value);
+        auto disassemble() const -> std::string;
         using Op = Cycles (*)(CPU&);
 
     private :
@@ -103,6 +108,6 @@ class CPU {
         auto opcode_ret_cc()->Cycles;
 
         auto opcode_DI()->Cycles;
-        
+
         auto opcode_STOP()->Cycles;
 };
