@@ -71,6 +71,7 @@ class CPU {
 
         // Timer gestion
         bool isRunning;
+        bool isStopped = false;
         auto handle_interrupts()-> Cycles ;
 
         //Flag condition checker
@@ -212,4 +213,7 @@ class CPU {
 
         auto opcode_sub_a_hl()->Cycles;
         auto opcode_sub_a_n8(u8 n8)->Cycles;
+
+        auto opcode_DI()->Cycles
+        auto opcode_STOP()->Cycles
 };

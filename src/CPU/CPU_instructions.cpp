@@ -1271,3 +1271,21 @@ Cycles CPU::opcode_sub_a_n8(u8 n8){
     Cycles cycles(2);
     return cycles;
 }
+
+Cycles CPU::opcode_DI(){
+    IME = false;
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+auto CPU::opcode_STOP() -> Cycles {
+
+    u8 next_byte = fetch8(); 
+    isStopped = true;
+
+    u8 lcdc = memory.read(0xFF40);
+    memory.write(0xFF40, lcdc & 0x7F); //éteindre l'écran en coupant le bit 7 du registre LCDC (0xFF40)
+
+    return Cycles(1);
+}

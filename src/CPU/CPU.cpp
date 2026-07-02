@@ -11,6 +11,20 @@ auto CPU::fetch_s8() -> s8 { return static_cast<s8>(fetch8()); }
 
 void CPU::run() {
     while (isRunning) {
+        if (isStopped) {
+            u8 IF = memory.read(irq::IF_ADDR);
+            u8 IE = memory.read(irq::IE_ADDR);
+            
+            if ((IF & IE & 0x10) != 0) {
+
+                isStopped = false;
+                
+                u8 lcdc = memory.read(0xFF40); 
+                memory.write(0xFF40, lcdc | 0x80); // Rallumer l'écran (Bit 7 du LCDC à 1)
+            } else {
+                memory.tick(Cycles(1));
+                continue; 
+            }
         Cycles cycle = handle_interrupts();
 
         if (cycle.value() == 0) {
@@ -27,8 +41,8 @@ void CPU::run() {
             PC = adress_call;
         }
 
-        memory.tick(cycle); //gestion ticks ppu etc
-    }
+        memory.tick(cycle);} //gestion ticks ppu etc
+        }
 }
 
 auto CPU::handle_interrupts() -> Cycles {
