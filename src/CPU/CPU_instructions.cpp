@@ -316,7 +316,7 @@ Cycles CPU::opcode_inc_SP(){
 
 Cycles CPU::opcode_jp_HL(){
     u16 adress = HL.value();
-    PC.set(adress);
+    PC = adress;
 
     Cycles cycles(1);
     return cycles;
@@ -324,7 +324,7 @@ Cycles CPU::opcode_jp_HL(){
 
 
 Cycles CPU::opcode_jp_n16(u16 adress){
-    PC.set(adress);
+    PC = adress;
 
     Cycles cycles(4);
     return cycles;
@@ -434,7 +434,7 @@ Cycles CPU::opcode_ld_A_r16(RegisterPair& R){
 }
 
 
-Cycles CPU::opcode_ld_A_n16(const u16 adress){                
+Cycles CPU::opcode_ld_A_n16(const u16 adress){
     A.set(memory.read(adress));
 
     Cycles cycles(4);
@@ -705,7 +705,7 @@ Cycles CPU::opcode_rl_HL(){
     u8 new_carry = bitwise::bit_value(HL_value, 7);
     u8 result = ((HL_value << 1) & 0xFE) | F.flag_carry_value();
     memory.write(HL.value(), result);
-    
+
     F.set_flag_zero(result==0);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
@@ -721,7 +721,7 @@ Cycles CPU::opcode_rl_A(){
     u8 new_carry = bitwise::bit_value(A_value, 7);
     u8 result = ((A_value << 1) & 0xFE) | F.flag_carry_value();
     A.set(result);
-    
+
     F.set_flag_zero(false);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
@@ -802,7 +802,7 @@ Cycles CPU::opcode_rr_HL(){
     u8 new_carry = bitwise::bit_value(HL_value, 0);
     u8 result = ((HL_value >> 1)  & 0x7F) | (F.flag_carry_value() <<7);
     memory.write(HL.value(), result);
-    
+
     F.set_flag_zero(result==0);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
@@ -888,15 +888,15 @@ Cycles CPU::opcode_call_n16(u16 adress){
 
 Cycles CPU::opcode_call_cc_n16(u16 adress, Condition_code cc){
     if(check_condition(cc)){
-        return opcode_call(adress);
+        return opcode_call_n16(adress);
     }
     return Cycles(3);
 }
 
 
 Cycles CPU::opcode_rst_vec(u16 vec){
-    opcode_call(vec);
-    
+    opcode_call_n16(vec);
+
     Cycles cycles(4);
     return cycles;
 }
@@ -1082,16 +1082,6 @@ Cycles CPU::opcode_srl_HL(){
 
 
 
-
-
-
-
-
-
-
-
-
-
 // 8-bit arithmetic instructions (except those starting with A)
 
 Cycles CPU::opcode_cp_a_r8(Register& R){
@@ -1148,9 +1138,6 @@ Cycles CPU::opcode_dec_hl(){
     return cycles;
 
 }
-
-
-
 
 
 Cycles CPU::opcode_inc_hl(){
@@ -1267,6 +1254,7 @@ Cycles CPU::opcode_swap_r8(Register& R){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(false);
+    return Cycles(10) ; //-->Valeur fausse à verifier
 }
 
 
@@ -1281,6 +1269,8 @@ Cycles CPU::opcode_swap_HL(){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(false);
+
+    return Cycles(10) ; //-->Valeur fausse à verifier
 }
 
 
@@ -1301,6 +1291,3 @@ Cycles CPU::opcode_jr_cc_n16(u8 offset, Condition_code cc){
     Cycles cycles(2);
     return cycles;
 }
-
-
-

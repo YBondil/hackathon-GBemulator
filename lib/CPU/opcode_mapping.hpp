@@ -1,11 +1,4 @@
 #pragma once
-// Tables de correspondance opcode -> opération.
-// Inclus dans EXACTEMENT UN .cpp (bas de src/CPU/CPU.cpp).
-// Chaque entrée est une lambda sans capture (-> pointeur de fonction) qui va
-// chercher ses opérandes (fetch8/16/s8) et appelle la méthode correspondante.
-//
-// NB: certaines instructions ne sont PAS implémentées (JP, JR, DI, HALT, STOP,
-// SWAP, DEC r16, ADD HL,r16...) -> laissées nullptr (voir la review).
 
 #include "CPU.hpp"
 
@@ -15,44 +8,44 @@ const std::array<CPU::Op, 256> CPU::opcode_table = [] {
 
     // ---------- 0x00-0x3F : divers / LD / INC / DEC / rotations ----------
     t[0x00] = [](CPU& c){ return c.opcode_nop(); };                              // NOP
-    t[0x01] = [](CPU& c){ return c.opcode_ld_n16(c.fetch16(), c.BC); };          // LD BC,n16
-    t[0x02] = [](CPU& c){ return c.opcode_ld_A(c.BC); };                         // LD (BC),A
+    t[0x01] = [](CPU& c){ return c.opcode_ld_r16_n16(c.fetch16(), c.BC); };          // LD BC,n16
+    t[0x02] = [](CPU& c){ return c.opcode_ld_r16_A(c.BC); };                         // LD (BC),A
     t[0x03] = [](CPU& c){ return c.opcode_inc_r16(c.BC); };                      // INC BC
     t[0x04] = [](CPU& c){ return c.opcode_inc_r8(c.B); };                        // INC B
     t[0x05] = [](CPU& c){ return c.opcode_dec_r8(c.B); };                        // DEC B
-    t[0x06] = [](CPU& c){ return c.opcode_ld_n8(c.fetch8(), c.B); };             // LD B,n8
+    t[0x06] = [](CPU& c){ return c.opcode_ld_r8_n8(c.fetch8(), c.B); };             // LD B,n8
     t[0x07] = [](CPU& c){ return c.opcode_rlc_A(); };                            // RLCA
     t[0x08] = [](CPU& c){ return c.opcode_ld_n16_SP(c.fetch16()); };             // LD (n16),SP
     t[0x0A] = [](CPU& c){ return c.opcode_ld_A_r16(c.BC); };                     // LD A,(BC)
     t[0x0C] = [](CPU& c){ return c.opcode_inc_r8(c.C); };                        // INC C
     t[0x0D] = [](CPU& c){ return c.opcode_dec_r8(c.C); };                        // DEC C
-    t[0x0E] = [](CPU& c){ return c.opcode_ld_n8(c.fetch8(), c.C); };             // LD C,n8
+    t[0x0E] = [](CPU& c){ return c.opcode_ld_r8_n8(c.fetch8(), c.C); };             // LD C,n8
     t[0x0F] = [](CPU& c){ return c.opcode_rrc_A(); };                            // RRCA
 
-    t[0x11] = [](CPU& c){ return c.opcode_ld_n16(c.fetch16(), c.DE); };          // LD DE,n16
-    t[0x12] = [](CPU& c){ return c.opcode_ld_A(c.DE); };                         // LD (DE),A
+    t[0x11] = [](CPU& c){ return c.opcode_ld_r16_n16(c.fetch16(), c.DE); };          // LD DE,n16
+    t[0x12] = [](CPU& c){ return c.opcode_ld_r16_A(c.DE); };                         // LD (DE),A
     t[0x13] = [](CPU& c){ return c.opcode_inc_r16(c.DE); };                      // INC DE
     t[0x14] = [](CPU& c){ return c.opcode_inc_r8(c.D); };                        // INC D
     t[0x15] = [](CPU& c){ return c.opcode_dec_r8(c.D); };                        // DEC D
-    t[0x16] = [](CPU& c){ return c.opcode_ld_n8(c.fetch8(), c.D); };             // LD D,n8
+    t[0x16] = [](CPU& c){ return c.opcode_ld_r8_n8(c.fetch8(), c.D); };             // LD D,n8
     t[0x17] = [](CPU& c){ return c.opcode_rl_A(); };                             // RLA
     t[0x1A] = [](CPU& c){ return c.opcode_ld_A_r16(c.DE); };                     // LD A,(DE)
     t[0x1C] = [](CPU& c){ return c.opcode_inc_r8(c.E); };                        // INC E
     t[0x1D] = [](CPU& c){ return c.opcode_dec_r8(c.E); };                        // DEC E
-    t[0x1E] = [](CPU& c){ return c.opcode_ld_n8(c.fetch8(), c.E); };             // LD E,n8
+    t[0x1E] = [](CPU& c){ return c.opcode_ld_r8_n8(c.fetch8(), c.E); };             // LD E,n8
     t[0x1F] = [](CPU& c){ return c.opcode_rr_A(); };                             // RRA
 
-    t[0x21] = [](CPU& c){ return c.opcode_ld_n16(c.fetch16(), c.HL); };          // LD HL,n16
+    t[0x21] = [](CPU& c){ return c.opcode_ld_r16_n16(c.fetch16(), c.HL); };          // LD HL,n16
     t[0x22] = [](CPU& c){ return c.opcode_ld_HLI_A(); };                         // LD (HL+),A
     t[0x23] = [](CPU& c){ return c.opcode_inc_r16(c.HL); };                      // INC HL
     t[0x24] = [](CPU& c){ return c.opcode_inc_r8(c.H); };                        // INC H
     t[0x25] = [](CPU& c){ return c.opcode_dec_r8(c.H); };                        // DEC H
-    t[0x26] = [](CPU& c){ return c.opcode_ld_n8(c.fetch8(), c.H); };             // LD H,n8
+    t[0x26] = [](CPU& c){ return c.opcode_ld_r8_n8(c.fetch8(), c.H); };             // LD H,n8
     t[0x27] = [](CPU& c){ return c.opcode_daa(); };                             // DAA
     t[0x2A] = [](CPU& c){ return c.opcode_ld_A_HLI(); };                         // LD A,(HL+)
     t[0x2C] = [](CPU& c){ return c.opcode_inc_r8(c.L); };                        // INC L
     t[0x2D] = [](CPU& c){ return c.opcode_dec_r8(c.L); };                        // DEC L
-    t[0x2E] = [](CPU& c){ return c.opcode_ld_n8(c.fetch8(), c.L); };             // LD L,n8
+    t[0x2E] = [](CPU& c){ return c.opcode_ld_r8_n8(c.fetch8(), c.L); };             // LD L,n8
     t[0x2F] = [](CPU& c){ return c.opcode_cpl(); };                             // CPL
 
     t[0x31] = [](CPU& c){ return c.opcode_ld_SP_n16(c.fetch16()); };            // LD SP,n16
@@ -66,50 +59,50 @@ const std::array<CPU::Op, 256> CPU::opcode_table = [] {
     t[0x3B] = [](CPU& c){ return c.opcode_dec_SP(); };                          // DEC SP  (buggé)
     t[0x3C] = [](CPU& c){ return c.opcode_inc_r8(c.A); };                        // INC A
     t[0x3D] = [](CPU& c){ return c.opcode_dec_r8(c.A); };                        // DEC A
-    t[0x3E] = [](CPU& c){ return c.opcode_ld_n8(c.fetch8(), c.A); };             // LD A,n8
+    t[0x3E] = [](CPU& c){ return c.opcode_ld_r8_n8(c.fetch8(), c.A); };             // LD A,n8
     t[0x3F] = [](CPU& c){ return c.opcode_ccf(); };                            // CCF
 
-    // ---------- 0x40-0x7F : LD r,r'  ( _opcode_ld(src, dest) ) ----------
+    // ---------- 0x40-0x7F : LD r,r'  ( opcode_ld_r8_r8(src, dest) ) ----------
     // dest B
-    t[0x40]=[](CPU&c){return c._opcode_ld(c.B,c.B);}; t[0x41]=[](CPU&c){return c._opcode_ld(c.C,c.B);};
-    t[0x42]=[](CPU&c){return c._opcode_ld(c.D,c.B);}; t[0x43]=[](CPU&c){return c._opcode_ld(c.E,c.B);};
-    t[0x44]=[](CPU&c){return c._opcode_ld(c.H,c.B);}; t[0x45]=[](CPU&c){return c._opcode_ld(c.L,c.B);};
-    t[0x46]=[](CPU&c){return c.opcode_ld_HL_r8(c.B);}; t[0x47]=[](CPU&c){return c._opcode_ld(c.A,c.B);};
+    t[0x40]=[](CPU&c){return c.opcode_ld_r8_r8(c.B,c.B);}; t[0x41]=[](CPU&c){return c.opcode_ld_r8_r8(c.C,c.B);};
+    t[0x42]=[](CPU&c){return c.opcode_ld_r8_r8(c.D,c.B);}; t[0x43]=[](CPU&c){return c.opcode_ld_r8_r8(c.E,c.B);};
+    t[0x44]=[](CPU&c){return c.opcode_ld_r8_r8(c.H,c.B);}; t[0x45]=[](CPU&c){return c.opcode_ld_r8_r8(c.L,c.B);};
+    t[0x46]=[](CPU&c){return c.opcode_ld_r8_HL(c.B);}; t[0x47]=[](CPU&c){return c.opcode_ld_r8_r8(c.A,c.B);};
     // dest C
-    t[0x48]=[](CPU&c){return c._opcode_ld(c.B,c.C);}; t[0x49]=[](CPU&c){return c._opcode_ld(c.C,c.C);};
-    t[0x4A]=[](CPU&c){return c._opcode_ld(c.D,c.C);}; t[0x4B]=[](CPU&c){return c._opcode_ld(c.E,c.C);};
-    t[0x4C]=[](CPU&c){return c._opcode_ld(c.H,c.C);}; t[0x4D]=[](CPU&c){return c._opcode_ld(c.L,c.C);};
-    t[0x4E]=[](CPU&c){return c.opcode_ld_HL_r8(c.C);}; t[0x4F]=[](CPU&c){return c._opcode_ld(c.A,c.C);};
+    t[0x48]=[](CPU&c){return c.opcode_ld_r8_r8(c.B,c.C);}; t[0x49]=[](CPU&c){return c.opcode_ld_r8_r8(c.C,c.C);};
+    t[0x4A]=[](CPU&c){return c.opcode_ld_r8_r8(c.D,c.C);}; t[0x4B]=[](CPU&c){return c.opcode_ld_r8_r8(c.E,c.C);};
+    t[0x4C]=[](CPU&c){return c.opcode_ld_r8_r8(c.H,c.C);}; t[0x4D]=[](CPU&c){return c.opcode_ld_r8_r8(c.L,c.C);};
+    t[0x4E]=[](CPU&c){return c.opcode_ld_r8_HL(c.C);}; t[0x4F]=[](CPU&c){return c.opcode_ld_r8_r8(c.A,c.C);};
     // dest D
-    t[0x50]=[](CPU&c){return c._opcode_ld(c.B,c.D);}; t[0x51]=[](CPU&c){return c._opcode_ld(c.C,c.D);};
-    t[0x52]=[](CPU&c){return c._opcode_ld(c.D,c.D);}; t[0x53]=[](CPU&c){return c._opcode_ld(c.E,c.D);};
-    t[0x54]=[](CPU&c){return c._opcode_ld(c.H,c.D);}; t[0x55]=[](CPU&c){return c._opcode_ld(c.L,c.D);};
-    t[0x56]=[](CPU&c){return c.opcode_ld_HL_r8(c.D);}; t[0x57]=[](CPU&c){return c._opcode_ld(c.A,c.D);};
+    t[0x50]=[](CPU&c){return c.opcode_ld_r8_r8(c.B,c.D);}; t[0x51]=[](CPU&c){return c.opcode_ld_r8_r8(c.C,c.D);};
+    t[0x52]=[](CPU&c){return c.opcode_ld_r8_r8(c.D,c.D);}; t[0x53]=[](CPU&c){return c.opcode_ld_r8_r8(c.E,c.D);};
+    t[0x54]=[](CPU&c){return c.opcode_ld_r8_r8(c.H,c.D);}; t[0x55]=[](CPU&c){return c.opcode_ld_r8_r8(c.L,c.D);};
+    t[0x56]=[](CPU&c){return c.opcode_ld_r8_HL(c.D);}; t[0x57]=[](CPU&c){return c.opcode_ld_r8_r8(c.A,c.D);};
     // dest E
-    t[0x58]=[](CPU&c){return c._opcode_ld(c.B,c.E);}; t[0x59]=[](CPU&c){return c._opcode_ld(c.C,c.E);};
-    t[0x5A]=[](CPU&c){return c._opcode_ld(c.D,c.E);}; t[0x5B]=[](CPU&c){return c._opcode_ld(c.E,c.E);};
-    t[0x5C]=[](CPU&c){return c._opcode_ld(c.H,c.E);}; t[0x5D]=[](CPU&c){return c._opcode_ld(c.L,c.E);};
-    t[0x5E]=[](CPU&c){return c.opcode_ld_HL_r8(c.E);}; t[0x5F]=[](CPU&c){return c._opcode_ld(c.A,c.E);};
+    t[0x58]=[](CPU&c){return c.opcode_ld_r8_r8(c.B,c.E);}; t[0x59]=[](CPU&c){return c.opcode_ld_r8_r8(c.C,c.E);};
+    t[0x5A]=[](CPU&c){return c.opcode_ld_r8_r8(c.D,c.E);}; t[0x5B]=[](CPU&c){return c.opcode_ld_r8_r8(c.E,c.E);};
+    t[0x5C]=[](CPU&c){return c.opcode_ld_r8_r8(c.H,c.E);}; t[0x5D]=[](CPU&c){return c.opcode_ld_r8_r8(c.L,c.E);};
+    t[0x5E]=[](CPU&c){return c.opcode_ld_r8_HL(c.E);}; t[0x5F]=[](CPU&c){return c.opcode_ld_r8_r8(c.A,c.E);};
     // dest H
-    t[0x60]=[](CPU&c){return c._opcode_ld(c.B,c.H);}; t[0x61]=[](CPU&c){return c._opcode_ld(c.C,c.H);};
-    t[0x62]=[](CPU&c){return c._opcode_ld(c.D,c.H);}; t[0x63]=[](CPU&c){return c._opcode_ld(c.E,c.H);};
-    t[0x64]=[](CPU&c){return c._opcode_ld(c.H,c.H);}; t[0x65]=[](CPU&c){return c._opcode_ld(c.L,c.H);};
-    t[0x66]=[](CPU&c){return c.opcode_ld_HL_r8(c.H);}; t[0x67]=[](CPU&c){return c._opcode_ld(c.A,c.H);};
+    t[0x60]=[](CPU&c){return c.opcode_ld_r8_r8(c.B,c.H);}; t[0x61]=[](CPU&c){return c.opcode_ld_r8_r8(c.C,c.H);};
+    t[0x62]=[](CPU&c){return c.opcode_ld_r8_r8(c.D,c.H);}; t[0x63]=[](CPU&c){return c.opcode_ld_r8_r8(c.E,c.H);};
+    t[0x64]=[](CPU&c){return c.opcode_ld_r8_r8(c.H,c.H);}; t[0x65]=[](CPU&c){return c.opcode_ld_r8_r8(c.L,c.H);};
+    t[0x66]=[](CPU&c){return c.opcode_ld_r8_HL(c.H);}; t[0x67]=[](CPU&c){return c.opcode_ld_r8_r8(c.A,c.H);};
     // dest L
-    t[0x68]=[](CPU&c){return c._opcode_ld(c.B,c.L);}; t[0x69]=[](CPU&c){return c._opcode_ld(c.C,c.L);};
-    t[0x6A]=[](CPU&c){return c._opcode_ld(c.D,c.L);}; t[0x6B]=[](CPU&c){return c._opcode_ld(c.E,c.L);};
-    t[0x6C]=[](CPU&c){return c._opcode_ld(c.H,c.L);}; t[0x6D]=[](CPU&c){return c._opcode_ld(c.L,c.L);};
-    t[0x6E]=[](CPU&c){return c.opcode_ld_HL_r8(c.L);}; t[0x6F]=[](CPU&c){return c._opcode_ld(c.A,c.L);};
+    t[0x68]=[](CPU&c){return c.opcode_ld_r8_r8(c.B,c.L);}; t[0x69]=[](CPU&c){return c.opcode_ld_r8_r8(c.C,c.L);};
+    t[0x6A]=[](CPU&c){return c.opcode_ld_r8_r8(c.D,c.L);}; t[0x6B]=[](CPU&c){return c.opcode_ld_r8_r8(c.E,c.L);};
+    t[0x6C]=[](CPU&c){return c.opcode_ld_r8_r8(c.H,c.L);}; t[0x6D]=[](CPU&c){return c.opcode_ld_r8_r8(c.L,c.L);};
+    t[0x6E]=[](CPU&c){return c.opcode_ld_r8_HL(c.L);}; t[0x6F]=[](CPU&c){return c.opcode_ld_r8_r8(c.A,c.L);};
     // dest (HL)   (0x76 = HALT, non implémenté)
-    t[0x70]=[](CPU&c){return c.opcode_ld_HL(c.B);}; t[0x71]=[](CPU&c){return c.opcode_ld_HL(c.C);};
-    t[0x72]=[](CPU&c){return c.opcode_ld_HL(c.D);}; t[0x73]=[](CPU&c){return c.opcode_ld_HL(c.E);};
-    t[0x74]=[](CPU&c){return c.opcode_ld_HL(c.H);}; t[0x75]=[](CPU&c){return c.opcode_ld_HL(c.L);};
-    t[0x77]=[](CPU&c){return c.opcode_ld_HL(c.A);};
+    t[0x70]=[](CPU&c){return c.opcode_ld_HL_r8(c.B);}; t[0x71]=[](CPU&c){return c.opcode_ld_HL_r8(c.C);};
+    t[0x72]=[](CPU&c){return c.opcode_ld_HL_r8(c.D);}; t[0x73]=[](CPU&c){return c.opcode_ld_HL_r8(c.E);};
+    t[0x74]=[](CPU&c){return c.opcode_ld_HL_r8(c.H);}; t[0x75]=[](CPU&c){return c.opcode_ld_HL_r8(c.L);};
+    t[0x77]=[](CPU&c){return c.opcode_ld_HL_r8(c.A);};
     // dest A
-    t[0x78]=[](CPU&c){return c._opcode_ld(c.B,c.A);}; t[0x79]=[](CPU&c){return c._opcode_ld(c.C,c.A);};
-    t[0x7A]=[](CPU&c){return c._opcode_ld(c.D,c.A);}; t[0x7B]=[](CPU&c){return c._opcode_ld(c.E,c.A);};
-    t[0x7C]=[](CPU&c){return c._opcode_ld(c.H,c.A);}; t[0x7D]=[](CPU&c){return c._opcode_ld(c.L,c.A);};
-    t[0x7E]=[](CPU&c){return c.opcode_ld_HL_r8(c.A);}; t[0x7F]=[](CPU&c){return c._opcode_ld(c.A,c.A);};
+    t[0x78]=[](CPU&c){return c.opcode_ld_r8_r8(c.B,c.A);}; t[0x79]=[](CPU&c){return c.opcode_ld_r8_r8(c.C,c.A);};
+    t[0x7A]=[](CPU&c){return c.opcode_ld_r8_r8(c.D,c.A);}; t[0x7B]=[](CPU&c){return c.opcode_ld_r8_r8(c.E,c.A);};
+    t[0x7C]=[](CPU&c){return c.opcode_ld_r8_r8(c.H,c.A);}; t[0x7D]=[](CPU&c){return c.opcode_ld_r8_r8(c.L,c.A);};
+    t[0x7E]=[](CPU&c){return c.opcode_ld_r8_HL(c.A);}; t[0x7F]=[](CPU&c){return c.opcode_ld_r8_r8(c.A,c.A);};
 
     // ---------- 0x80-0xBF : ALU A,r8 ----------
     // ADD A,r  (_opcode_add(A, r))
@@ -160,26 +153,26 @@ const std::array<CPU::Op, 256> CPU::opcode_table = [] {
     // ---------- 0xC0-0xFF ----------
     t[0xC0]=[](CPU&c){return c.opcode_ret_cc(CC::NZ);};                          // RET NZ
     t[0xC1]=[](CPU&c){return c.opcode_pop_r16(c.BC);};                          // POP BC
-    t[0xC4]=[](CPU&c){return c.opcode_call_cc(c.fetch16(),CC::NZ);};            // CALL NZ,n16
+    t[0xC4]=[](CPU&c){return c.opcode_call_cc_n16(c.fetch16(),CC::NZ);};            // CALL NZ,n16
     t[0xC5]=[](CPU&c){return c.opcode_push_r16(c.BC);};                         // PUSH BC
     t[0xC6]=[](CPU&c){return c.opcode_add_A_n8(c.A.value(),c.fetch8());};       // ADD A,n8
     t[0xC7]=[](CPU&c){return c.opcode_rst_vec(RST::rst1);};                     // RST 00
     t[0xC8]=[](CPU&c){return c.opcode_ret_cc(CC::Z);};                          // RET Z
     t[0xC9]=[](CPU&c){return c.opcode_ret();};                                  // RET
-    t[0xCC]=[](CPU&c){return c.opcode_call_cc(c.fetch16(),CC::Z);};             // CALL Z,n16
-    t[0xCD]=[](CPU&c){return c.opcode_call(c.fetch16());};                      // CALL n16
+    t[0xCC]=[](CPU&c){return c.opcode_call_cc_n16(c.fetch16(),CC::Z);};             // CALL Z,n16
+    t[0xCD]=[](CPU&c){return c.opcode_call_n16(c.fetch16());};                      // CALL n16
     t[0xCE]=[](CPU&c){return c.opcode_adc_n8(c.fetch8());};                     // ADC A,n8
     t[0xCF]=[](CPU&c){return c.opcode_rst_vec(RST::rst2);};                     // RST 08
 
     t[0xD0]=[](CPU&c){return c.opcode_ret_cc(CC::NC);};                         // RET NC
     t[0xD1]=[](CPU&c){return c.opcode_pop_r16(c.DE);};                          // POP DE
-    t[0xD4]=[](CPU&c){return c.opcode_call_cc(c.fetch16(),CC::NC);};            // CALL NC,n16
+    t[0xD4]=[](CPU&c){return c.opcode_call_cc_n16(c.fetch16(),CC::NC);};            // CALL NC,n16
     t[0xD5]=[](CPU&c){return c.opcode_push_r16(c.DE);};                         // PUSH DE
     t[0xD6]=[](CPU&c){return c.opcode_sub_a_n8(c.fetch8());};                   // SUB A,n8
     t[0xD7]=[](CPU&c){return c.opcode_rst_vec(RST::rst3);};                     // RST 10
     t[0xD8]=[](CPU&c){return c.opcode_ret_cc(CC::C);};                          // RET C
     t[0xD9]=[](CPU&c){return c.opcode_reti();};                                 // RETI
-    t[0xDC]=[](CPU&c){return c.opcode_call_cc(c.fetch16(),CC::C);};             // CALL C,n16
+    t[0xDC]=[](CPU&c){return c.opcode_call_cc_n16(c.fetch16(),CC::C);};             // CALL C,n16
     t[0xDE]=[](CPU&c){return c.opcode_sbc_a_n8(c.fetch8());};                   // SBC A,n8
     t[0xDF]=[](CPU&c){return c.opcode_rst_vec(RST::rst4);};                     // RST 18
 
