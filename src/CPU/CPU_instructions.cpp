@@ -394,8 +394,8 @@ Cycles CPU::opcode_DI(){
 
 auto CPU::opcode_STOP() -> Cycles {
 
-    u8 next_byte = fetch8(); 
-    isStopped = true;
+    u8 next_byte = fetch8();
+    is_stopped = true;
 
     u8 lcdc = memory.read(0xFF40);
     memory.write(0xFF40, lcdc & 0x7F); //éteindre l'écran en coupant le bit 7 du registre LCDC (0xFF40)
