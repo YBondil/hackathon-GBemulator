@@ -316,7 +316,7 @@ Cycles CPU::opcode_inc_SP(){
 
 Cycles CPU::opcode_jp_HL(){
     u16 adress = HL.value();
-    PC.set(adress);
+    PC = adress;
 
     Cycles cycles(1);
     return cycles;
@@ -324,7 +324,7 @@ Cycles CPU::opcode_jp_HL(){
 
 
 Cycles CPU::opcode_jp_n16(u16 adress){
-    PC.set(adress);
+    PC = adress;
 
     Cycles cycles(4);
     return cycles;
