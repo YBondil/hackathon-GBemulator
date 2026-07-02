@@ -17,6 +17,7 @@ struct Cycles{
         int _value = 0;
 };
 
+
 struct Bytes{
     public:
         Bytes(int n): _value(n){};
@@ -25,6 +26,7 @@ struct Bytes{
     private:
         int _value = 0;
 };
+
 
  /* namespace GB_CONST {
     constexpr int CPU_FREQ = 4194304 ;

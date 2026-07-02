@@ -34,6 +34,15 @@ void CPU::run() {
             u8 opcode = fetch8();
             cycle = run_opcode(opcode);
         }
+        if (latent_enable){         //gestion de EI
+            latent_enable = false;
+            IME = true;
+        }
+        if (latent_call){           //gestion de CALL
+            latent_call = false;
+            SP.set(PC);
+            PC = adress_call;
+        }
 
         memory.tick(cycle); //gestion ticks ppu etc
     }
@@ -121,6 +130,23 @@ auto CPU::pop_stack8() -> u8 {
     u8 value = memory.read(SP.value());
     SP.increment();
     return value;
+}
+
+
+bool CPU::check_condition(Condition_code cc){
+    switch(cc){
+        case Condition_code::Z : 
+            return F.flag_zero();
+        
+        case Condition_code::NZ : 
+            return ~F.flag_zero();
+        
+        case Condition_code::C : 
+            return F.flag_zero();
+        
+        case Condition_code::NC : 
+            return ~F.flag_zero();
+    }
 }
 
 
