@@ -313,7 +313,7 @@ Cycles CPU::opcode_inc_SP(){
 
 /*Loadouts*/
 
-Cycles CPU::_opcode_ld(Register& R1, Register& R2){
+Cycles CPU::opcode_ld_r8_r8(Register& R1, Register& R2){
     R2.set(R1.value());
 
     Cycles cycles(1);
@@ -321,7 +321,7 @@ Cycles CPU::_opcode_ld(Register& R1, Register& R2){
 }
 
 
-Cycles CPU::opcode_ld_n8(u8 n, Register& R){
+Cycles CPU::opcode_ld_r8_n8(u8 n, Register& R){
     R.set(n);
 
     Cycles cycles(2);
@@ -329,7 +329,7 @@ Cycles CPU::opcode_ld_n8(u8 n, Register& R){
 }
 
 
-Cycles CPU::opcode_ld_n16(u16 n, RegisterPair& R){
+Cycles CPU::opcode_ld_r16_n16(u16 n, RegisterPair& R){
     R.set(n);
 
     Cycles cycles(3);
@@ -337,7 +337,7 @@ Cycles CPU::opcode_ld_n16(u16 n, RegisterPair& R){
 }
 
 
-Cycles CPU::opcode_ld_HL(Register& R){
+Cycles CPU::opcode_ld_HL_r8(Register& R){
     memory.write(HL.value(), R.value());
 
     Cycles cycles(2);
@@ -353,7 +353,7 @@ Cycles CPU::opcode_ld_HL_n8(RegisterPair& R){
 }
 
 
-Cycles CPU::opcode_ld_HL_r8(Register& R){
+Cycles CPU::opcode_ld_r8_HL(Register& R){
     R.set(memory.read(HL.value()));
 
     Cycles cycles(2);
@@ -362,7 +362,7 @@ Cycles CPU::opcode_ld_HL_r8(Register& R){
 }
 
 
-Cycles CPU::opcode_ld_A(RegisterPair& R){
+Cycles CPU::opcode_ld_r16_A(RegisterPair& R){
     memory.write(R.value(), A.value());
 
     Cycles cycles(2);
@@ -1288,4 +1288,17 @@ Cycles CPU::opcode_jr_n16(u8 offset){
     Cycles cycles(3);
     return cycles;
 }
+
+
+Cycles CPU::opcode_jr_cc_n16(u8 offset, Condition_code cc){
+    if (check_condition(cc)){
+        PC += offset;
+        return Cycles(3);
+    }
+
+    Cycles cycles(2);
+    return cycles;
+}
+
+
 

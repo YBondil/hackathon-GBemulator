@@ -109,13 +109,13 @@ class CPU {
         auto opcode_inc_r16(RegisterPair& R)->Cycles;
         auto opcode_inc_SP()->Cycles;
 
-        auto _opcode_ld(Register& R1, Register& R2)->Cycles;
-        auto opcode_ld_n8(u8 n, Register& R)->Cycles;
-        auto opcode_ld_n16(u16 n, RegisterPair& R)->Cycles;
-        auto opcode_ld_HL(Register& R)->Cycles;
-        auto opcode_ld_HL_n8(RegisterPair& R)->Cycles;
+        auto opcode_ld_r8_r8(Register& R1, Register& R2)->Cycles;
+        auto opcode_ld_r8_n8(u8 n, Register& R)->Cycles;
+        auto opcode_ld_r16_n16(u16 n, RegisterPair& R)->Cycles;
         auto opcode_ld_HL_r8(Register& R)->Cycles;
-        auto opcode_ld_A(RegisterPair& R)->Cycles;
+        auto opcode_ld_HL_n8(RegisterPair& R)->Cycles;
+        auto opcode_ld_r8_HL(Register& R)->Cycles;
+        auto opcode_ld_r16_A(RegisterPair& R)->Cycles;
         auto opcode_ld_n16_A(const u16 adress)->Cycles;
 
         auto opcode_ldh_n16_A(const u16 adress)->Cycles;
@@ -219,4 +219,10 @@ class CPU {
 
         auto opcode_sub_a_hl()->Cycles;
         auto opcode_sub_a_n8(u8 n8)->Cycles;
+
+        auto opcode_swap_r8(Register& R)->Cycles;
+        auto opcode_swap_HL()->Cycles;
+
+        auto opcode_jr_n16(u8 offset)->Cycles;
+        auto opcode_jr_cc_n16(u8 offset, Condition_code cc)->Cycles;
 };
