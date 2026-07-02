@@ -1,5 +1,6 @@
 #include "gameboy.hpp"
 #include "video/PPU.hpp"
+#include "bitwise.hpp"
 
 namespace {
     constexpr u16 VRAM_BEGIN = 0x8000, VRAM_END = 0x9FFF;
@@ -9,8 +10,11 @@ namespace {
     constexpr u16 WY = 0xFF4A, WX = 0xFF4B;
 
     constexpr int DOTS_PER_LINE = 456;   // T-cycles par ligne
-    constexpr int VBLANK_LINE   = 144;   // début de la VBlank
+    constexpr int VBLANK_LINE   = 144;   // début VBlank
     constexpr int LAST_LINE     = 153;   // dernière ligne avant de reboucler
+    constexpr int OBJ_8X8 = 64 ;
+    constexpr int OBJ_8X16 = 128 ;
+
 }
 
 PPU::PPU(Gameboy& gb) : Gb(gb) {
@@ -61,14 +65,13 @@ void PPU::write(u16 adress, u8 value) {
     }
 }
 
-//on ne fait qu'avancer LY. Le rendu se fait d'un seul coup quand on entre en VBlank
 void PPU::tick(Cycles cycle) {
     dots += cycle.value();
     while (dots >= DOTS_PER_LINE) {
         dots -= DOTS_PER_LINE;
         ++line;
         if (line == VBLANK_LINE) {
-            render_background();   // rend toute l'image d'un coup
+            render_background();
             vblank = true;
         } else if (line > LAST_LINE) {
             line = 0;
@@ -84,44 +87,44 @@ bool PPU::take_vblank() {
 }
 
 auto PPU::framebuffer() const -> const u8* { return frame.data(); }
-// absence gestion des sprites
-void PPU::render_background() {
+
+void PPU::render_background(){
     const u8 lcdc = LDC_control.value();
 
-    // bit0 : BG activé ? sinon écran blanc
-    if (!(lcdc & 0x01)) { frame.fill(0); return; }
+    //lecture LCD_control
+    bool window_bg_enable = bitwise::check_bit(lcdc, 0);
+    bool obj_enable = bitwise::check_bit(lcdc, 1); //inutile
+    int obj_size = (bitwise::check_bit(lcdc, 2)) ? OBJ_8X16 : OBJ_8X8 ; //inutile
+    u16 bg_tile_map = bitwise::check_bit(lcdc, 3) ? 0x9C00 : 0x9800;
+    bool unsigned_addressing = bitwise::check_bit(lcdc, 4);
+    bool window_displayed = bitwise::check_bit(lcdc, 5); //inutile
+    u16 window_tile_map = bitwise::check_bit(lcdc,6) ? 0x9800 : 0x9C00 ;
+    bool ldc_active = bitwise::check_bit(lcdc,7) ;
+    if(!ldc_active){frame.fill(0);}
 
-    const u16  map_base       = (lcdc & 0x08) ? 0x9C00 : 0x9800;  // bit3 : quelle tilemap
-    const bool unsigned_tiles = (lcdc & 0x10);                    // bit4 : quelle tile data
-    const u8   scy = Scroll_Y.value();
-    const u8   scx = Scroll_X.value();
-    const u8   bgp = BG_palette.value();
+    u8 scY = Scroll_Y.value();
+    u8 scX = Scroll_X.value();
+    u8 BGPalette = BG_palette.value();
+    for (int y=0; y<HEIGHT; ++y){
+        u8 bgy = static_cast<u8>(y + scY);
+        for (int x=0; x<WIDTH; ++x){
+            u8 bgx = static_cast<u8>(x + scX);
 
-    for (int y = 0; y < HEIGHT; ++y) {
-        const u8 bgY = static_cast<u8>(scy + y);      // wrap 256 automatique (u8)
-        for (int x = 0; x < WIDTH; ++x) {
-            const u8 bgX = static_cast<u8>(scx + x);
+            u16 tile_address = bg_tile_map + (bgy/8) * 32 + (bgx/8) ;
+            u8 tile_index = vram(tile_address) ;
 
-            // index de tuile dans la tilemap 32x32
-            const u16 map_addr = map_base + (bgY / 8) * 32 + (bgX / 8);
-            const u8  index    = vram(map_addr);
+            u16 tile_data = unsigned_addressing ?
+                0x8000 + tile_index * 16 :
+                0x9000 + (s8)tile_index * 16 ;
 
-            //adresse de la tuile
-            const u16 tile_addr = unsigned_tiles
-                ? static_cast<u16>(0x8000 + index * 16)
-                : static_cast<u16>(0x9000 + static_cast<int8_t>(index) * 16);
+            u16 line = (u16)bgy % 8 ;
+            u8 low = vram(tile_data + line*2) ;
+            u8 high = vram(tile_data + line*2 + 1) ;
+            int col = 7 - (bgx % 8) ;
+            u8 color_id = bitwise::compose_bits(bitwise::bit_value(low, col), bitwise::bit_value(high, col));
+            u8 color = BGPalette >> color_id * 2 & 0x3 ;
+            frame[bgx + bgy*WIDTH] = color ;
 
-            //les 2 octets de la ligne de la tuile (2 bits/pixel)
-            const int row = bgY % 8;
-            const u8  lo  = vram(tile_addr + row * 2);
-            const u8  hi  = vram(tile_addr + row * 2 + 1);
-
-            //le pixel -> id couleur 0..3 -> palette BGP -> nuance
-            const int bit      = 7 - (bgX % 8);
-            const u8  color_id = static_cast<u8>((((hi >> bit) & 1) << 1) | ((lo >> bit) & 1));
-            const u8  shade    = (bgp >> (color_id * 2)) & 0x3;
-
-            frame[y * WIDTH + x] = shade;
         }
     }
 }

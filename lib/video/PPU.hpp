@@ -6,7 +6,8 @@
 #include "registers.hpp"
 
 class Gameboy;
-
+// Implémentation directe de https://gbdev.io/pandocs/Rendering.html#ppu-modes
+// -> absence de window et de gestions des tiles ---> inutile pour Tetris
 class PPU {
     public :
         static constexpr int WIDTH  = 160;
@@ -18,21 +19,21 @@ class PPU {
         auto read(u16 adress) -> u8 ;
         void write(u16 adress, u8 value) ;
 
-        void tick(Cycles cycle);              // avance LY, rend la frame à la VBlank
-        bool take_vblank();                   // true une fois par frame -> lever IF.bit0
-        auto framebuffer() const -> const u8*;// WIDTH*HEIGHT nuances (0..3)
-        void render_background();             // rend tout le BG dans 'frame'
+        void tick(Cycles cycle);
+        bool take_vblank();
+        auto framebuffer() const -> const u8*;
+        void render_background();
 
     private :
-        auto vram(u16 adress) const -> u8;    // accès VRAM (adresse absolue)
+        auto vram(u16 adress) const -> u8;
 
         Gameboy& Gb;
         std::vector<u8> VRAM ;
 
-        std::array<u8, WIDTH * HEIGHT> frame{};   // image courante (nuances 0..3)
-        int dots = 0;                             // cycles accumulés dans la ligne
-        int line = 0;                             // LY courant (0..153)
-        bool vblank = false;                      // demande d'interruption VBlank
+        std::array<u8, WIDTH * HEIGHT> frame{};
+        int dots = 0;
+        int line = 0;
+        bool vblank = false;
 
         //Registers
         Register LDC_control; // R/W

@@ -1,5 +1,4 @@
 #pragma once
-#include "../utils/definitions.hpp"
 
 enum class GBColor {
     Color0, /* White */
