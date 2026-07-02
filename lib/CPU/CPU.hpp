@@ -44,6 +44,7 @@ class CPU {
         // Timer gestion
         bool isRunning;
         bool IME = false ;
+        bool is_stopped = false ;
         auto handle_interrupts()-> Cycles ;
 
         //OPCodes
@@ -100,4 +101,8 @@ class CPU {
         auto opcode_res_u3_HL()->Cycles;
         auto opcode_ret()->Cycles;
         auto opcode_ret_cc()->Cycles;
+
+        auto opcode_DI()->Cycles;
+        
+        auto opcode_STOP()->Cycles;
 };

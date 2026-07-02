@@ -11,6 +11,21 @@ auto CPU::fetch_s8() -> s8 { return static_cast<s8>(fetch8()); }
 
 void CPU::run() {
     while (isRunning) {
+        if (isStopped) {
+            u8 IF = memory.read(irq::IF_ADDR);
+            u8 IE = memory.read(irq::IE_ADDR);
+            
+            if ((IF & IE & 0x10) != 0) {
+
+                isStopped = false;
+                
+                u8 lcdc = memory.read(0xFF40); 
+                memory.write(0xFF40, lcdc | 0x80); // Rallumer l'écran (Bit 7 du LCDC à 1)
+            } else {
+                memory.tick(Cycles(1));
+                continue; // On passe directement à la boucle suivante sans exécuter d'opcode
+            }
+        }
         Cycles cycle = handle_interrupts();
 
         if (cycle.value() == 0) {
