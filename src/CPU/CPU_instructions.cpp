@@ -191,7 +191,7 @@ Cycles CPU:: opcode_ccf(){
 
 Cycles CPU::opcode_cpl(){
     u8 A_value = A.value();
-    u8 result = ~A_value;   //Vérifier si ~A_value existe bien ; peut-être doit être passé en argument à la fonction 
+    u8 result = ~A_value;   //Vérifier si ~A_value existe bien ; peut-être doit être passé en argument à la fonction
     A.set(result);
 
     F.set_flag_subtract(true);
@@ -258,7 +258,7 @@ Cycles CPU::opcode_dec_SP(){
     u8 value = memory.read(SP.value());
     u8 result = value - 1;
     memory.write(SP.value(), result);
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -305,9 +305,40 @@ Cycles CPU::opcode_inc_SP(){
     u8 value = memory.read(SP.value());
     u8 result = value + 1;
     memory.write(SP.value(), result);
-    
+
     Cycles cycles(2);
     return cycles;
+}
+
+
+/*JP*/
+
+
+Cycles CPU::opcode_jp_HL(){
+    u16 adress = HL.value();
+    PC.set(adress);
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_jp_n16(u16 adress){
+    PC.set(adress);
+
+    Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_jp_cc_n16(u16 adress, Condition_code cc){
+    if(check_condition(cc)){
+        return opcode_jp_n16(adress);
+    }
+    else{
+        Cycles cycles(3);
+        return cycles;
+    }
 }
 
 
@@ -403,10 +434,18 @@ Cycles CPU::opcode_ld_A_r16(RegisterPair& R){
 }
 
 
-Cycles CPU::opcode_ldh_A_n16(const u16 adress){                 //Manque l'encadrement des valeurs de adress
+Cycles CPU::opcode_ld_A_n16(const u16 adress){                
     A.set(memory.read(adress));
 
     Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_ldh_A_n16(const u16 adress){                 //Manque l'encadrement des valeurs de adress
+    A.set(memory.read(adress));
+
+    Cycles cycles(3);
     return cycles;
 }
 
@@ -655,7 +694,7 @@ Cycles CPU::opcode_rl_r8(Register& R){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -671,7 +710,7 @@ Cycles CPU::opcode_rl_HL(){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(4);
     return cycles;
 }
@@ -687,7 +726,7 @@ Cycles CPU::opcode_rl_A(){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(1);
     return cycles;
 }
@@ -699,15 +738,15 @@ Cycles CPU::opcode_rlc_r8(Register& R){
     u8 new_carry = bitwise::bit_value(R_value, 7);
     u8 result = bitwise::set_bit_to(R_value << 1, 0, bitwise::check_bit(new_carry,0));
     R.set(result);
-    
+
     F.set_flag_zero(result==0);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(2);
     return cycles;
-}    
+}
 
 
 Cycles CPU::opcode_rlc_HL(){
@@ -715,7 +754,7 @@ Cycles CPU::opcode_rlc_HL(){
     u8 new_carry = bitwise::bit_value(HL_value, 7);
     u8 result = bitwise::set_bit_to(HL_value << 1, 0, bitwise::check_bit(new_carry,0));
     memory.write(HL.value(), result);
-    
+
     F.set_flag_zero(result==0);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
@@ -723,7 +762,7 @@ Cycles CPU::opcode_rlc_HL(){
 
     Cycles cycles(4);
     return cycles;
-}    
+}
 
 
 Cycles CPU::opcode_rlc_A(){
@@ -731,12 +770,12 @@ Cycles CPU::opcode_rlc_A(){
     u8 new_carry = bitwise::bit_value(A_value, 7);
     u8 result = bitwise::set_bit_to(A_value << 1, 0, bitwise::check_bit(new_carry,0));
     A.set(result);
-    
+
     F.set_flag_zero(false);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(1);
     return cycles;
 }
@@ -752,7 +791,7 @@ Cycles CPU::opcode_rr_r8(Register& R){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(2);
     return cycles;
 }
@@ -768,7 +807,7 @@ Cycles CPU::opcode_rr_HL(){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(4);
     return cycles;
 }
@@ -784,7 +823,7 @@ Cycles CPU::opcode_rr_A(){
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(1);
     return cycles;
 }
@@ -795,15 +834,15 @@ Cycles CPU::opcode_rrc_r8(Register& R){
     u8 new_carry = bitwise::bit_value(R_value, 0);
     u8 result = bitwise::set_bit_to(R_value >> 1, 7, bitwise::check_bit(new_carry,0));
     R.set(result);
-    
+
     F.set_flag_zero(result==0);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(2);
     return cycles;
-}    
+}
 
 
 Cycles CPU::opcode_rrc_HL(){
@@ -811,15 +850,15 @@ Cycles CPU::opcode_rrc_HL(){
     u8 new_carry = bitwise::bit_value(HL_value, 0);
     u8 result = bitwise::set_bit_to(HL_value >>1, 7, bitwise::check_bit(new_carry,0));
     memory.write(HL.value(), result);
-    
+
     F.set_flag_zero(result==0);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(4);
     return cycles;
-}    
+}
 
 
 Cycles CPU::opcode_rrc_A(){
@@ -827,18 +866,18 @@ Cycles CPU::opcode_rrc_A(){
     u8 new_carry = bitwise::bit_value(A_value, 0);
     u8 result = bitwise::set_bit_to(A_value >> 1, 7, bitwise::check_bit(new_carry,0));
     A.set(result);
-    
+
     F.set_flag_zero(false);
     F.set_flag_subtract(false);
     F.set_flag_half_carry(false);
     F.set_flag_carry(new_carry);
-    
+
     Cycles cycles(1);
     return cycles;
 }
 
 
-Cycles CPU::opcode_call(u16 adress){
+Cycles CPU::opcode_call_n16(u16 adress){
     adress_call = adress;
     latent_call = true;
 
@@ -847,16 +886,17 @@ Cycles CPU::opcode_call(u16 adress){
 }
 
 
-Cycles CPU::opcode_call_cc(u16 adress, Condition_code cc){
-   if(check_condition(cc)){
-    return opcode_call(adress);
-   }
-   return Cycles(3);
+Cycles CPU::opcode_call_cc_n16(u16 adress, Condition_code cc){
+    if(check_condition(cc)){
+        return opcode_call(adress);
+    }
+    return Cycles(3);
 }
 
 
 Cycles CPU::opcode_rst_vec(u16 vec){
     opcode_call(vec);
+    
     Cycles cycles(4);
     return cycles;
 }
@@ -1054,7 +1094,7 @@ Cycles CPU::opcode_srl_HL(){
 
 // 8-bit arithmetic instructions (except those starting with A)
 
-Cycles CPU::opcode_cp_a_r8(Register& R){ 
+Cycles CPU::opcode_cp_a_r8(Register& R){
     const int compare = (A.value()-R.value());
 
     F.set_flag_zero(compare == 0);
@@ -1068,7 +1108,7 @@ Cycles CPU::opcode_cp_a_r8(Register& R){
 }
 
 
-Cycles CPU::opcode_cp_a_hl(){ 
+Cycles CPU::opcode_cp_a_hl(){
     const u8 value = memory.read(HL.value());
     const int compare = (A.value() - value);
 
@@ -1079,11 +1119,11 @@ Cycles CPU::opcode_cp_a_hl(){
 
     Cycles cycles(2);
     return cycles;
-    
+
 }
 
 
-Cycles CPU::opcode_cp_a_n8(u8 n8){ 
+Cycles CPU::opcode_cp_a_n8(u8 n8){
     const int compare  = A.value() - n8;
 
     F.set_flag_zero(compare == 0);
@@ -1093,24 +1133,10 @@ Cycles CPU::opcode_cp_a_n8(u8 n8){
 
     Cycles cycles(2);
     return cycles;
-    
+
 }
 
-
-Cycles CPU::opcode_dec_r8(Register& R){ 
-    R.set(R.value() - 1);
-
-    F.set_flag_zero(R.value() == 0);
-    F.set_flag_subtract(1);
-    F.set_flag_half_carry(R.value()%16 == 15);
-    
-    Cycles cycles(1);
-    return cycles;
-    
-}
-
-
-Cycles CPU::opcode_dec_hl(){ 
+Cycles CPU::opcode_dec_hl(){
     const u8 value = memory.read(HL.value());
     memory.write(HL.value(), value - 1);
 
@@ -1120,24 +1146,14 @@ Cycles CPU::opcode_dec_hl(){
 
     Cycles cycles(3);
     return cycles;
-    
+
 }
 
 
-Cycles CPU::opcode_inc_r8(Register& R){ 
-    R.set(R.value() + 1);
-
-    F.set_flag_zero(R.value() == 0);
-    F.set_flag_subtract(0);
-    F.set_flag_half_carry(R.value()%16 == 0);
-    
-    Cycles cycles(1);
-    return cycles;
-    
-}
 
 
-Cycles CPU::opcode_inc_hl(){ 
+
+Cycles CPU::opcode_inc_hl(){
     const u8 value = memory.read(HL.value());
     memory.write(HL.value(), value + 1);
 
@@ -1147,14 +1163,14 @@ Cycles CPU::opcode_inc_hl(){
 
     Cycles cycles(3);
     return cycles;
-    
+
 }
 
 
 
 
 
-Cycles CPU::opcode_sbc_a_r8(Register& R){ 
+Cycles CPU::opcode_sbc_a_r8(Register& R){
     const int result = A.value() - R.value() - F.flag_carry();
     A.set(result);
 
@@ -1162,14 +1178,14 @@ Cycles CPU::opcode_sbc_a_r8(Register& R){
     F.set_flag_subtract(1);
     F.set_flag_half_carry(A.value()%16 < R.value()%16 + F.flag_carry()%16);
     F.set_flag_carry(result < 0);
-    
+
     Cycles cycles(1);
     return cycles;
-    
+
 }
 
 
-Cycles CPU::opcode_sbc_a_hl(){ 
+Cycles CPU::opcode_sbc_a_hl(){
     const int result = A.value() - memory.read(HL.value()) - F.flag_carry();
     A.set(result);
 
@@ -1177,14 +1193,14 @@ Cycles CPU::opcode_sbc_a_hl(){
     F.set_flag_subtract(1);
     F.set_flag_half_carry(A.value()%16 < memory.read(HL.value())%16 + F.flag_carry()%16);
     F.set_flag_carry(result < 0);
-    
+
     Cycles cycles(2);
     return cycles;
-    
+
 }
 
 
-Cycles CPU::opcode_sbc_a_n8(u8 n8){ 
+Cycles CPU::opcode_sbc_a_n8(u8 n8){
     const int result = A.value() - n8 - F.flag_carry();
     A.set(result);
 
@@ -1192,24 +1208,13 @@ Cycles CPU::opcode_sbc_a_n8(u8 n8){
     F.set_flag_subtract(1);
     F.set_flag_half_carry(A.value()%16 < n8%16 + F.flag_carry()%16);
     F.set_flag_carry(result < 0);
-    
+
     Cycles cycles(2);
     return cycles;
-    
+
 }
 
-
-
-
-
-
-
-
-
-
-
-
-Cycles CPU::opcode_sub_a_r8(Register& R){ 
+Cycles CPU::opcode_sub_a_r8(Register& R){
     const int result = A.value() - R.value();
     A.set(result);
 
@@ -1217,14 +1222,13 @@ Cycles CPU::opcode_sub_a_r8(Register& R){
     F.set_flag_subtract(1);
     F.set_flag_half_carry(A.value()%16 < R.value()%16);
     F.set_flag_carry(result < 0);
-    
+
     Cycles cycles(1);
     return cycles;
-    
+
 }
 
-
-Cycles CPU::opcode_sub_a_hl(){ 
+Cycles CPU::opcode_sub_a_hl(){
     const int result = A.value() - memory.read(HL.value());
     A.set(result);
 
@@ -1232,14 +1236,13 @@ Cycles CPU::opcode_sub_a_hl(){
     F.set_flag_subtract(1);
     F.set_flag_half_carry(A.value()%16 < memory.read(HL.value())%16);
     F.set_flag_carry(result < 0);
-   
+
     Cycles cycles(2);
     return cycles;
-    
 }
 
 
-Cycles CPU::opcode_sub_a_n8(u8 n8){ 
+Cycles CPU::opcode_sub_a_n8(u8 n8){
     const int result = A.value() - n8;
     A.set(result);
 
@@ -1247,10 +1250,9 @@ Cycles CPU::opcode_sub_a_n8(u8 n8){
     F.set_flag_subtract(1);
     F.set_flag_half_carry(A.value()%16 < n8%16);
     F.set_flag_carry(result < 0);
-    
+
     Cycles cycles(2);
     return cycles;
-    
 }
 
 
