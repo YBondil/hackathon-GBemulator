@@ -111,7 +111,7 @@ Cycles CPU::opcode_add_SP_s8(s8 n){
 Cycles CPU::opcode_and_A_r8(Register& R){
     u8 R_value = R.value();
     u8 A_value = A.value();
-    u8 result = R_value && A_value;
+    u8 result = R_value & A_value;
     A.set(result);
 
     F.set_flag_zero(result==0);
@@ -127,7 +127,7 @@ Cycles CPU::opcode_and_A_r8(Register& R){
 Cycles CPU::opcode_and_A_HL(){
     u8 value = memory.read(HL.value());
     u8 A_value = A.value();
-    u8 result = value && A_value;
+    u8 result = value & A_value;
     A.set(result);
 
     F.set_flag_zero(result==0);
@@ -142,7 +142,7 @@ Cycles CPU::opcode_and_A_HL(){
 
 Cycles CPU::opcode_and_A_n8(u8 n){
     u8 A_value = A.value();
-    u8 result = n && A_value;
+    u8 result = n & A_value;
     A.set(result);
 
     F.set_flag_zero(result==0);
@@ -257,9 +257,9 @@ Cycles CPU::opcode_dec_r8(Register& R){
 
 
 Cycles CPU::opcode_dec_SP(){
-    u8 value = memory.read(SP.value());
+    u8 value = SP.value();
     u8 result = value - 1;
-    memory.write(SP.value(), result);
+    SP.set(result);
 
     Cycles cycles(2);
     return cycles;
@@ -304,9 +304,9 @@ Cycles CPU::opcode_inc_r16(RegisterPair& R){
 }
 
 Cycles CPU::opcode_inc_SP(){
-    u8 value = memory.read(SP.value());
+    u8 value = SP.value();
     u8 result = value + 1;
-    memory.write(SP.value(), result);
+    SP.set(result);
 
     Cycles cycles(2);
     return cycles;
@@ -604,17 +604,17 @@ Cycles CPU::opcode_push_r16(RegisterPair& R){
 
 Cycles CPU::opcode_res_u3_r8(u8 u, Register& R){
     u8 value = R.value();
-    bitwise::set_bit_to(value, u, false);
-    R.set(value);
+    u8 result = bitwise::set_bit_to(value, u, false);
+    R.set(result);
     Cycles cycles(2);
     return cycles;
 }
 
 
 Cycles CPU::opcode_res_u3_HL(u8 u){
-    u8 value = HL.value();
-    bitwise::set_bit_to(value, u, false);
-    HL.set(value);
+    u8 value = memory.read(HL.value());
+    u8 result = bitwise::set_bit_to(value, u, false);
+    memory.write(HL.value(), result);
 
     Cycles cycles(4);
     return cycles;
@@ -934,8 +934,8 @@ Cycles CPU::opcode_scf(){
 
 Cycles CPU::opcode_set_u3_r8(u8 u, Register& R){
     u8 value = R.value();
-    bitwise::set_bit_to(value, u, true);
-    R.set(value);
+    u8 result = bitwise::set_bit_to(value, u, true);
+    R.set(result);
     Cycles cycles(2);
     return cycles;
 }
@@ -943,8 +943,8 @@ Cycles CPU::opcode_set_u3_r8(u8 u, Register& R){
 
 Cycles CPU::opcode_set_u3_HL(u8 u){
     u8 value = memory.read(HL.value());
-    bitwise::set_bit_to(value, u, true);
-    memory.write(HL.value(), value);
+    u8 result = bitwise::set_bit_to(value, u, true);
+    memory.write(HL.value(), result);
 
     Cycles cycles(4);
     return cycles;
@@ -1050,7 +1050,7 @@ Cycles CPU::opcode_sra_r8(Register& R){
 
 Cycles CPU::opcode_sra_HL(){
     u8 HL_value = memory.read(HL.value());
-    u8 new_carry = bitwise::bit_value(HL_value, 7);
+    u8 new_carry = bitwise::bit_value(HL_value, 0);
     u8 b7 = bitwise::bit_value(HL_value, 7);
     u8 result = (HL_value >> 1) & (bitwise::set_bit_to(0xFF,7,bitwise::check_bit(b7,0)));
     memory.write(HL.value(), result);
