@@ -602,13 +602,13 @@ Cycles CPU::opcode_sub_a_n8(u8 n8){
 
 
 
-
 // 16-bit arithmetic instructions
 
 
 Cycles CPU::opcode_add_HL_r16(Register16& R){
     const int result = HL.value() + R.value();
     HL.set(result);
+
     int bit12_HL = bitwise::check_bit(HL.value(),12); 
     int bit12_R = bitwise::check_bit(R.value(),12);
     F.set_flag_subtract(0);
@@ -618,4 +618,22 @@ Cycles CPU::opcode_add_HL_r16(Register16& R){
     Cycles cycles(2);
     return cycles;
 }
+
+
+Cycles CPU::opcode_dec_r16(Register16& R){
+    R.set(R.value() - 1);
+    Cycles cycles(2);
+    return cycles;
+}
+
+
+
+
+Cycles CPU::opcode_dec_r16(Register16& R){
+    R.set(R.value() + 1);
+    Cycles cycles(2);
+    return cycles;
+}
+
+
 

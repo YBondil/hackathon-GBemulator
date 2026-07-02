@@ -125,4 +125,6 @@ class CPU {
         // 16-bit arithmetic instructions
 
         Cycles opcode_add_HL_r16(Register16& R);
+        Cycles opcode_dec_r16(Register16& R);
+        Cycles opcode_inc_r16(Register16& R);
 };
