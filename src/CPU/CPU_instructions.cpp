@@ -311,6 +311,37 @@ Cycles CPU::opcode_inc_SP(){
 }
 
 
+/*JP*/
+
+
+Cycles CPU::opcode_jp_HL(){
+    u16 adress = HL.value();
+    PC.set(adress);
+
+    Cycles cycles(1);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_jp_n16(u16 adress){
+    PC.set(adress);
+
+    Cycles cycles(4);
+    return cycles;
+}
+
+
+Cycles CPU::opcode_jp_cc_n16(u16 adress, Condition_code cc){
+    if(check_condition(cc)){
+        return opcode_jp_n16(adress);
+    }
+    else{
+        Cycles cycles(3);
+        return cycles;
+    }
+}
+
+
 /*Loadouts*/
 
 Cycles CPU::_opcode_ld(Register& R1, Register& R2){
@@ -886,7 +917,7 @@ Cycles CPU::opcode_rrc_A(){
 }
 
 
-Cycles CPU::opcode_call(u16 adress){
+Cycles CPU::opcode_call_n16(u16 adress){
     adress_call = adress;
     latent_call = true;
 
@@ -904,7 +935,7 @@ Cycles CPU::opcode_set_u3_r8(u8 bit, Register& R){
 }
 
 
-Cycles CPU::opcode_call_cc(u16 adress, Condition_code cc){
+Cycles CPU::opcode_call_cc_n16(u16 adress, Condition_code cc){
    if(check_condition(cc)){
     return opcode_call(adress);
    }
@@ -1271,3 +1302,5 @@ Cycles CPU::opcode_sub_a_n8(u8 n8){
     Cycles cycles(2);
     return cycles;
 }
+
+

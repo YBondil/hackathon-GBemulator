@@ -94,6 +94,9 @@ class CPU {
         auto opcode_bit_u3_r8(u8 bit, Register& R)->Cycles;
         auto opcode_bit_u3_HL(u8 bit)->Cycles;
 
+        auto opcode_call_n16(u16 adress)->Cycles;
+        auto opcode_call_cc_n16(u16 adress, Condition_code cc)->Cycles;
+
         auto opcode_ccf()->Cycles;
 
         auto opcode_cpl()->Cycles;  /*Vérifier si ~A_value existe bien*/
@@ -107,6 +110,10 @@ class CPU {
         auto opcode_inc_HL()->Cycles;
         auto opcode_inc_r16(RegisterPair& R)->Cycles;
         auto opcode_inc_SP()->Cycles;
+
+        auto opcode_jp_HL()->Cycles;
+        auto opcode_jp_n16(u16 adress)->Cycles;
+        auto opcode_jp_cc_n16(u16 adress, Condition_code cc)->Cycles;
 
         auto _opcode_ld(Register& R1, Register& R2)->Cycles;
         auto opcode_ld_n8(u8 n, Register& R)->Cycles;
