@@ -1302,5 +1302,23 @@ Cycles CPU::opcode_sub_a_n8(u8 n8){
     Cycles cycles(2);
     return cycles;
 }
+Cycles CPU::opcode_halt() {
+    const u8 pending = memory.read(irq::IF_ADDR) & memory.read(irq::IE_ADDR) & 0x1F;
 
+    if (IME) {
+        // Cas normal : on dort, réveil au prochain interrupt
+        _halted = true;
+    }
+    else if (pending == 0) {
+        // IME==0 mais rien en attente : on dort quand même
+        _halted = true;
+    }
+    else {
+        // IME==0 ET interruption en attente : HALT BUG
+        // le CPU ne dort PAS, mais le prochain fetch lira l'octet deux fois
+        _halted = false;
+        _halt_bug = true;
+    }
 
+    return Cycles(1);
+}

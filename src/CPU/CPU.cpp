@@ -11,20 +11,31 @@ auto CPU::fetch_s8() -> s8 { return static_cast<s8>(fetch8()); }
 
 void CPU::run() {
     while (isRunning) {
+        if (isStopped) {
+            u8 IF = memory.read(irq::IF_ADDR);
+            u8 IE = memory.read(irq::IE_ADDR);
+
+            if ((IF & IE & 0x10) != 0) {
+
+                isStopped = false;
+
+                u8 lcdc = memory.read(0xFF40); 
+                memory.write(0xFF40, lcdc | 0x80); // Rallumer l'écran (Bit 7 du LCDC à 1)
+            } else {
+                memory.tick(Cycles(1));
+                continue; // On passe directement à la boucle suivante sans exécuter d'opcode
+            }
+        }
+        if (_halted) {                // <- Ajouté pour HALT
+            memory.tick(Cycles(1));   // 1. fait avancer le hardware
+            handle_interrupts();      // 2. tente le réveil (+ dispatch si IME)
+            continue;                 // 3. saute le fetch/exécution
+        }
         Cycles cycle = handle_interrupts();
 
         if (cycle.value() == 0) {
             u8 opcode = fetch8();
             cycle = run_opcode(opcode);
-        }
-        if (latent_enable){         //gestion de EI
-            latent_enable = false;
-            IME = true;
-        }
-        if (latent_call){           //gestion de CALL
-            latent_call = false;
-            SP.set(PC);
-            PC = adress_call;
         }
 
         memory.tick(cycle); //gestion ticks ppu etc

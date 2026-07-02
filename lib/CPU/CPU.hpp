@@ -58,6 +58,8 @@ class CPU {
 
         //Interrupt Master Enable
         bool IME = false ;
+        bool _halted   = false; // <- Ajouté pour HALT
+        bool _halt_bug = false; // <- Ajouté pour HALT
         bool latent_enable = false ;            //s'active si EI est appelé
 
         //Call
