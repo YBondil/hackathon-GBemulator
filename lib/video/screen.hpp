@@ -1,5 +1,6 @@
 #pragma once
 #include "definitions.hpp"
+#include "memory"
 #include <memory>
 
 class Screen {
@@ -7,16 +8,16 @@ public:
     static constexpr int WIDTH  = 160;
     static constexpr int HEIGHT = 144;
 
-    explicit Screen(int scale = 4);   // ouvre la fenêtre
-    ~Screen();                        // ferme la fenêtre
+    explicit Screen(int scale = 4);
+    ~Screen();
 
-    Screen(const Screen&) = delete;               // possède fenêtre + texture GPU
-    Screen& operator=(const Screen&) = delete;
+    Screen(const Screen&) = delete;
+    Screen& operator=(const Screen&) = delete; //pour interdire
 
-    bool should_close() const;        // fenêtre fermée ou touche Échap
-    void draw(const u8* shades);      // WIDTH*HEIGHT octets, chacun dans {0,1,2,3}
+    bool should_close() const;
+    void draw(const u8* shades);
 
 private:
-    struct Impl;
-    std::unique_ptr<Impl> impl;
+    struct DataRaylib;
+    std::unique_ptr<DataRaylib> infoRaylib;
 };
